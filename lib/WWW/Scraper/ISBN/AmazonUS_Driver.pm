@@ -3,8 +3,8 @@ package WWW::Scraper::ISBN::AmazonUS_Driver;
 use strict;
 use warnings;
 
-use vars qw($VERSION @ISA);
-$VERSION = '0.04';
+use vars qw($VERSION);
+$VERSION = '0.05';
 
 #--------------------------------------------------------------------------
 
@@ -23,21 +23,18 @@ Searches for book information from the (US) Amazon online catalog.
 
 =cut
 
-### CHANGES ###############################################################
-#   0.01	15/04/2004  Initial Release
-#	0.02	19/04/2004	Test::More added as a prerequisites for PPMs
-#   0.03	31/08/2004  Data & Layout change on UK site
-#   0.04	07/01/2001  handler() moved to WWW::Scraper::ISBN::Driver
-#						fix for stripbook search keyword
+#--------------------------------------------------------------------------
+
+###########################################################################
+#Inheritence		                                                      #
 ###########################################################################
 
-#--------------------------------------------------------------------------
+use base qw(WWW::Scraper::ISBN::Driver);
 
 ###########################################################################
 #Library Modules                                                          #
 ###########################################################################
 
-use WWW::Scraper::ISBN::Driver;
 use WWW::Mechanize;
 use Template::Extract;
 
@@ -49,12 +46,6 @@ use constant	AMAZON	=> 'http://www.amazon.com/';
 use constant	SEARCH	=> 'http://www.amazon.com/';
 
 #--------------------------------------------------------------------------
-
-###########################################################################
-#Inheritence		                                                      #
-###########################################################################
-
-@ISA = qw(WWW::Scraper::ISBN::Driver);
 
 ###########################################################################
 #Interface Functions                                                      #
@@ -83,8 +74,6 @@ a valid page is returned, the following fields are returned via the book hash:
   publisher
 
 The book_link, thumb_link and image_link refer back to the Amazon (US) website. 
-
-=back
 
 =cut
 
@@ -116,17 +105,12 @@ sub search {
 
 	# The Book page
 	my $template = <<END;
-<META name="description" content="[% title %], [% author %]">[% ... %]
-<span class=small>
-<br />
-<table border=0 align=left><tr><td valign=top align=center>
-<a href="[% image_link %]">
-<img src="[% thumb_link %]" width=[% ... %] height=[% ... %] align=left border=0></a>
-<br clear="left" />[% ... %]
-<li class="small">
-<b>Publisher:</b> [% publisher %];[% pubdate %])
-<li class="small">
-<b>ISBN:</b>[% isbn %]<br
+<meta name="description" content="[% content %]"[% ... %]
+<div class="buying">[% ... %]
+<div style=[% ... %]
+<a href="[% image_link %]"[% ... %]><img src="[% thumb_link %]"[% ... %]></a>[% ... %]
+<b class="h1">Product Details</b><br />[% ... %]
+<li><b>Publisher:</b>[% published %]</li>
 END
 
 	my $extract = Template::Extract->new;
@@ -137,10 +121,14 @@ END
 
 	# trim top and tail
 	foreach (keys %$data) { $data->{$_} =~ s/^\s+//;$data->{$_} =~ s/\s+$//; }
-	$data->{pubdate} =~ s/^.*?\(//;
+
+	($data->{title},$data->{author}) = 
+		($data->{content} =~ /(?:Amazon.com: Books: )?\s*(.*?)(?:\s+by|,)\s+(.*)/);
+	($data->{publisher},$data->{pubdate}) = 
+		($data->{published} =~ /\s*(.*?)(?:;.*?)?\s+\((.*?)\)/);
 
 	my $bk = {
-		'isbn'			=> $data->{isbn},
+		'isbn'			=> $isbn,
 		'author'		=> $data->{author},
 		'title'			=> $data->{title},
 		'image_link'	=> $data->{image_link},
@@ -154,8 +142,26 @@ END
 	return $self->book;
 }
 
+=item C<handler()>
+
+This should be called via inheritence. Unfortunately it isn't. Until I can
+figure out why, the method is here.
+
+=cut
+
+sub handler {
+	my $self = shift;
+	if (@_) {
+		$self->{ERROR} = shift;
+		print "Error: $self->{ERROR}\n"	if $self->verbosity;
+	};
+	return $self->found(0);
+}
+
 1;
 __END__
+
+=back
 
 =head1 REQUIRES
 

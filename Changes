@@ -1,8 +1,14 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Amazon_Driver.
 
-0.04	07/01/2001  
+0.05	01/03/2005
+	- Data & Layout change on both US site
+	- fixed URL test in UK link tests
+	- changed from @ISA to 'use base'
+
+0.04	07/01/2005
 	- handler() moved to WWW::Scraper::ISBN::Driver
 	- test suite updated to peform skips if can't access web pages
+	- fix for stripbook search keyword
 
 0.03	31/08/2004
 	- Data & Layout change on both US & UK sites

@@ -3,8 +3,8 @@ package WWW::Scraper::ISBN::AmazonUK_Driver;
 use strict;
 use warnings;
 
-use vars qw($VERSION @ISA);
-$VERSION = '0.04';
+use vars qw($VERSION);
+$VERSION = '0.05';
 
 #--------------------------------------------------------------------------
 
@@ -23,20 +23,18 @@ Searches for book information from the (UK) Amazon online catalog.
 
 =cut
 
-### CHANGES ###############################################################
-#   0.01	15/04/2004  Initial Release
-#	0.02	19/04/2004	Test::More added as a prerequisites for PPMs
-#   0.03	31/08/2004  Data & Layout change on UK site
-#   0.04	07/01/2001  handler() moved to WWW::Scraper::ISBN::Driver
+#--------------------------------------------------------------------------
+
+###########################################################################
+#Inheritence		                                                      #
 ###########################################################################
 
-#--------------------------------------------------------------------------
+use base qw(WWW::Scraper::ISBN::Driver);
 
 ###########################################################################
 #Library Modules                                                          #
 ###########################################################################
 
-use WWW::Scraper::ISBN::Driver;
 use WWW::Mechanize;
 use Template::Extract;
 
@@ -48,12 +46,6 @@ use constant	AMAZON	=> 'http://www.amazon.co.uk/';
 use constant	SEARCH	=> 'http://www.amazon.co.uk/';
 
 #--------------------------------------------------------------------------
-
-###########################################################################
-#Inheritence		                                                      #
-###########################################################################
-
-@ISA = qw(WWW::Scraper::ISBN::Driver);
 
 ###########################################################################
 #Interface Functions                                                      #

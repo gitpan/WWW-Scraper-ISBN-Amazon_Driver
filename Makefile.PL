@@ -3,7 +3,7 @@ use ExtUtils::MakeMaker;
 # the contents of the Makefile that is written.
 WriteMakefile(
     'NAME'		=> 'WWW::Scraper::ISBN::Amazon_Driver',
-    'VERSION'	=> '0.04',
+    'VERSION'	=> '0.05',
     'PREREQ_PM'		=> {
 
 		WWW::Scraper::ISBN			=> 0.25,
