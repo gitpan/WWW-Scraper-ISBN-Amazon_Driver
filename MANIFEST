@@ -1,0 +1,12 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+lib/WWW/Scraper/ISBN/AmazonUS_Driver.pm
+lib/WWW/Scraper/ISBN/AmazonUK_Driver.pm
+t/01basic.t
+t/10objectus.t
+t/11objectuk.t
+t/91pod.t
+t/92podcover.t
+META.yml                                Module meta-data (added by MakeMaker)
