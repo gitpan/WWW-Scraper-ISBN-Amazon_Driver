@@ -21,12 +21,12 @@ use Test::More tests => 21;
 
 	my $book = $record->book;
 	is($book->{'isbn'},'0201795264');
-	is($book->{'title'},'Perl Medic : Transforming Legacy Code');
-	is($book->{'author'},'Peter J. Scott');
+	is($book->{'title'},'Perl Medic: Transforming Legacy Code');
+	is($book->{'author'},'Peter Scott');
 	is($book->{'image_link'},'http://images.amazon.com/images/P/0201795264.01.LZZZZZZZ.jpg');
 	is($book->{'thumb_link'},'http://images.amazon.com/images/P/0201795264.01._PE30_PI_SCMZZZZZZZ_.jpg');
-	is($book->{'publisher'},'Pearson Higher Education');
-	is($book->{'pubdate'},'March 5, 2004');
+	is($book->{'publisher'},'Addison-Wesley Professional');
+	is($book->{'pubdate'},'March 1, 2004');
 	like($book->{'book_link'},qr!^http://www.amazon.com/exec/obidos/ASIN/!);
 
 	$isbn = "0672320673";
@@ -43,7 +43,7 @@ use Test::More tests => 21;
 	is($book->{'author'},'Clinton Pierce');
 	is($book->{'image_link'},'http://images.amazon.com/images/P/0672320673.01.LZZZZZZZ.jpg');
 	is($book->{'thumb_link'},'http://images.amazon.com/images/P/0672320673.01._PE7_PI_SCMZZZZZZZ_.jpg');
-	is($book->{'publisher'},'SAMS');
+	is($book->{'publisher'},'Sams');
 	is($book->{'pubdate'},'July 18, 2001');
 	like($book->{'book_link'},qr!^http://www.amazon.com/exec/obidos/ASIN/!);
 

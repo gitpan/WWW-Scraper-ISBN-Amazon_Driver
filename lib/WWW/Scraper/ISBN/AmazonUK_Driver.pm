@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION @ISA);
-$VERSION = '0.01';
+$VERSION = '0.03';
 
 #--------------------------------------------------------------------------
 
@@ -24,7 +24,9 @@ Searches for book information from the (UK) Amazon online catalog.
 =cut
 
 ### CHANGES ###############################################################
-#   0.01   15/04/2004   Initial Release
+#   0.01	15/04/2004  Initial Release
+#	0.02	19/04/2004	Test::More added as a prerequisites for PPMs
+#   0.03	31/08/2004  Data & Layout change on UK site
 ###########################################################################
 
 #--------------------------------------------------------------------------
@@ -103,25 +105,23 @@ sub search {
 	# The Book page
 	my $template = <<END;
 <META name="description" content="[% title %], [% author %], [% ... %]">[% ... %]
-<form method=POST action=http://www.amazon.co.uk/exec/obidos/handle-buy-box=[% ... %]>
+<form method=POST action=[% ... %]handle-buy-box[% ... %]>
 <a href="[% image_link %]"><img src="[% thumb_link %]" [% ... %]
 pages
 ([% pubdate %])
 <li>
 <b>Publisher:</b> [% publisher %]
 <li>
-<b>ISBN:</b>[% isbn %]</li>
+<b>ISBN:</b>[% isbn %]
+
+</li>
 END
 
 	my $extract = Template::Extract->new;
     my $data = $extract->extract($template, $mechanize->content());
 
-	unless(defined $data) {
-		print "Error extracting data from Amazon.co.uk result page.\n"	if $self->verbosity;
-		$self->error("Could not extract data from Amazon.co.uk result page.\n");
-		$self->found(0);
-		return 0;
-	}
+	return $self->_error_handler("Could not extract data from amazon.co.uk result page.")
+		unless(defined $data);
 
 	# trim top and tail
 	foreach (keys %$data) { $data->{$_} =~ s/^\s+//;$data->{$_} =~ s/\s+$//; }
@@ -140,6 +140,15 @@ END
 	$self->book($bk);
 	$self->found(1);
 	return $self->book;
+}
+
+sub _error_handler {
+	my $self = shift;
+	my $mess = shift;
+	print "Error: $mess\n"	if $self->verbosity;
+	$self->error("$mess\n");
+	$self->found(0);
+	return 0;
 }
 
 1;

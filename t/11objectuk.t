@@ -25,7 +25,7 @@ use Test::More tests => 21;
 	is($book->{'author'},'Peter Scott');
 	is($book->{'image_link'},'http://images-eu.amazon.com/images/P/0201795264.02.LZZZZZZZ.jpg');
 	is($book->{'thumb_link'},'http://images-eu.amazon.com/images/P/0201795264.02._PE30_SCMZZZZZZZ_.jpg');
-	is($book->{'publisher'},'Addison-Wesley');
+	is($book->{'publisher'},'Addison Wesley');
 	is($book->{'pubdate'},'April 2004');
 	like($book->{'book_link'},qr!^http://www.amazon.co.uk/exec/obidos/ASIN/!);
 
