@@ -1,15 +1,15 @@
 # http://module-build.sourceforge.net/META-spec.html
 #XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
 name:         WWW-Scraper-ISBN-Amazon_Driver
-version:      0.03
+version:      0.04
 version_from: 
 installdirs:  site
 requires:
     Template::Extract:             0
     Test::More:                    0.45
     WWW::Mechanize:                0
-    WWW::Scraper::ISBN:            0.23
-    WWW::Scraper::ISBN::Driver:    0.16
+    WWW::Scraper::ISBN:            0.25
+    WWW::Scraper::ISBN::Driver:    0.18
 
 distribution_type: module
-generated_by: ExtUtils::MakeMaker version 6.21
+generated_by: ExtUtils::MakeMaker version 6.23

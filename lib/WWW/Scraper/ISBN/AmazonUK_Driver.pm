@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION @ISA);
-$VERSION = '0.03';
+$VERSION = '0.04';
 
 #--------------------------------------------------------------------------
 
@@ -27,6 +27,7 @@ Searches for book information from the (UK) Amazon online catalog.
 #   0.01	15/04/2004  Initial Release
 #	0.02	19/04/2004	Test::More added as a prerequisites for PPMs
 #   0.03	31/08/2004  Data & Layout change on UK site
+#   0.04	07/01/2001  handler() moved to WWW::Scraper::ISBN::Driver
 ###########################################################################
 
 #--------------------------------------------------------------------------
@@ -120,7 +121,7 @@ END
 	my $extract = Template::Extract->new;
     my $data = $extract->extract($template, $mechanize->content());
 
-	return $self->_error_handler("Could not extract data from amazon.co.uk result page.")
+	return $self->handler("Could not extract data from amazon.co.uk result page.")
 		unless(defined $data);
 
 	# trim top and tail
@@ -140,15 +141,6 @@ END
 	$self->book($bk);
 	$self->found(1);
 	return $self->book;
-}
-
-sub _error_handler {
-	my $self = shift;
-	my $mess = shift;
-	print "Error: $mess\n"	if $self->verbosity;
-	$self->error("$mess\n");
-	$self->found(0);
-	return 0;
 }
 
 1;
@@ -187,7 +179,7 @@ Requires the following modules be installed:
 
 =head1 COPYRIGHT
 
-  Copyright (C) 2002-2004 Barbie for Miss Barbell Productions
+  Copyright (C) 2004-2005 Barbie for Miss Barbell Productions
   All Rights Reserved.
 
   This module is free software; you can redistribute it and/or 
