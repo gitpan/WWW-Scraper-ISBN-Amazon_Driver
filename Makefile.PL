@@ -3,13 +3,13 @@ use ExtUtils::MakeMaker;
 # the contents of the Makefile that is written.
 WriteMakefile(
     'NAME'		=> 'WWW::Scraper::ISBN::Amazon_Driver',
-    'VERSION_FROM'	=> 'lib/WWW/Scraper/ISBN/AmazonUK_Driver.pm',
+    'VERSION'	=> '0.02',
     'PREREQ_PM'		=> {
-
 		WWW::Scraper::ISBN			=> 0.23,
 		WWW::Scraper::ISBN::Driver	=> 0.16,
 		WWW::Mechanize				=> 0,
 		Template::Extract			=> 0,
+		Test::More					=> 0.45,	# for testing
 
 	},
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005

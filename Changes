@@ -1,4 +1,7 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Amazon_Driver.
 
+0.02	19/04/2004
+		- Test::More added as a prerequisites for PPMs
+
 0.01	15/04/2004
-	- original version
+		- original version
