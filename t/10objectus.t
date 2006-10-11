@@ -22,13 +22,13 @@ use Test::More tests => 21;
 
 		my $book = $record->book;
 		is($book->{'isbn'},'0201795264');
-		is($book->{'title'},'Perl Medic : Transforming Legacy Code');
+		like($book->{'title'},qr!Transforming Legacy Code!);
 		is($book->{'author'},'Peter J. Scott');
 		like($book->{'image_link'},qr!^http://www.amazon.com/gp/product/images!);
-		is($book->{'thumb_link'},'http://images.amazon.com/images/P/0201795264.01._PE34_SCMZZZZZZZ_.jpg');
+		like($book->{'thumb_link'},qr!amazon.com/images/P/\d+\.\d+\.\w+\.jpg!);
 		is($book->{'publisher'},'Addison-Wesley Professional');
 		is($book->{'pubdate'},'March 5, 2004');
-		like($book->{'book_link'},qr!^http://www.amazon.com/exec/obidos/!);
+		like($book->{'book_link'},qr!^http://www.amazon.com/Perl-Medic-Transforming-Legacy-Code/!);
 	}
 
 	$isbn = "0672320673";
@@ -42,13 +42,13 @@ use Test::More tests => 21;
 
 		my $book = $record->book;
 		is($book->{'isbn'},'0672320673');
-		is($book->{'title'},q|Perl Developer's Dictionary|);
+		like($book->{'title'},qr!Perl Developer\'s Dictionary!);
 		is($book->{'author'},'Clinton Pierce');
 		like($book->{'image_link'},qr!^http://www.amazon.com/gp/product/images!);
-		is($book->{'thumb_link'},'http://images.amazon.com/images/P/0672320673.01._PE34_SCMZZZZZZZ_.jpg');
+		like($book->{'thumb_link'},qr!amazon.com/images/P/\d+\.\d+\.\w+\.jpg!);
 		is($book->{'publisher'},'Sams');
 		is($book->{'pubdate'},'July 18, 2001');
-		like($book->{'book_link'},qr!^http://www.amazon.com/exec/obidos/!);
+		like($book->{'book_link'},qr!^http://www.amazon.com/Perl-Developers-Dictionary!);
 	}
 
 ###########################################################

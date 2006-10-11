@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.05';
+$VERSION = '0.06';
 
 #--------------------------------------------------------------------------
 
@@ -85,7 +85,7 @@ sub search {
 
 	my $mechanize = WWW::Mechanize->new();
 	$mechanize->get( SEARCH );
-	return undef	unless($mechanize->success());
+	return	unless($mechanize->success());
 
 	# Amazon have a couple of templates for the front page.
 	my @forms = $mechanize->forms;
@@ -101,14 +101,14 @@ sub search {
 	$mechanize->set_fields( 'field-keywords' => $isbn, 'url' => $keyword );
 	$mechanize->submit();
 
-	return undef	unless($mechanize->success());
+	return	unless($mechanize->success());
 
 	# The Book page
 	my $template = <<END;
 <meta name="description" content="[% content %]"[% ... %]
 <div class="buying">[% ... %]
 <div style=[% ... %]
-<a href="[% image_link %]"[% ... %]><img src="[% thumb_link %]"[% ... %]></a>[% ... %]
+registerImage("original_image", "[% thumb_link %]", "<a href="+'"'+"[% image_link %]"+[% ... %]
 <b class="h1">Product Details</b><br />[% ... %]
 <li><b>Publisher:</b>[% published %]</li>
 END
@@ -140,22 +140,6 @@ END
 	$self->book($bk);
 	$self->found(1);
 	return $self->book;
-}
-
-=item C<handler()>
-
-This should be called via inheritence. Unfortunately it isn't. Until I can
-figure out why, the method is here.
-
-=cut
-
-sub handler {
-	my $self = shift;
-	if (@_) {
-		$self->{ERROR} = shift;
-		print "Error: $self->{ERROR}\n"	if $self->verbosity;
-	};
-	return $self->found(0);
 }
 
 1;

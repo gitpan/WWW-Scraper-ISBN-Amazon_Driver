@@ -3,7 +3,7 @@ use ExtUtils::MakeMaker;
 # the contents of the Makefile that is written.
 WriteMakefile(
     'NAME'		=> 'WWW::Scraper::ISBN::Amazon_Driver',
-    'VERSION'	=> '0.05',
+    'VERSION'	=> '0.06',
     'PREREQ_PM'		=> {
 
 		WWW::Scraper::ISBN			=> 0.25,
@@ -14,6 +14,6 @@ WriteMakefile(
 
 	},
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
-      (ABSTRACT => q|Search drivers for the Amazon online catalog|,
+      (ABSTRACT => 'Search drivers for the Amazon online catalog',
        AUTHOR     => 'Barbie <barbie@cpan.org>') : ()),
 );

@@ -1,5 +1,9 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Amazon_Driver.
 
+0.06	11/10/2006
+	- Fixed US/UK website link changes
+	- Devel::Cover - 89.7%
+
 0.05	01/03/2005
 	- Data & Layout change on both US site
 	- fixed URL test in UK link tests

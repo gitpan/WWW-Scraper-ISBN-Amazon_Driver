@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.05';
+$VERSION = '0.06';
 
 #--------------------------------------------------------------------------
 
@@ -87,13 +87,13 @@ sub search {
 
 	my $mechanize = WWW::Mechanize->new();
 	$mechanize->get( SEARCH );
-	return undef	unless($mechanize->success());
+	return	unless($mechanize->success());
 
 	$mechanize->form_number(1);
-	$mechanize->set_fields( 'field-keywords' => $isbn, 'url' => 'index=books-uk' );
+	$mechanize->set_fields( 'field-keywords' => $isbn, 'url' => 'search-alias=stripbooks' );
 	$mechanize->submit();
 
-	return undef	unless($mechanize->success());
+	return	unless($mechanize->success());
 
 	# The Book page
 	my $template = <<END;
