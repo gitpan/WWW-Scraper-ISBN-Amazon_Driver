@@ -30,11 +30,15 @@ For optional testing the module would like these other modules:
 
   Test::Pod
   Test::Pod::Coverage
+  Test::YAML::Meta
 
-COPYRIGHT AND LICENCE
+COPYRIGHT AND LICENSE
 
-  Copyright (C) 2002-2004 Barbie for Miss Barbell Productions
-  All Rights Reserved.
+  Copyright (C) 2004-2007 Barbie for Miss Barbell Productions
 
-This module is free software; you can redistribute it and/or modify it 
-under the same terms as Perl itself.
+  This module is free software; you can redistribute it and/or 
+  modify it under the same terms as Perl itself.
+
+The full text of the licenses can be found in the Artistic file included 
+with this distribution, or in perlartistic as part of Perl installation, 
+in the 5.8.1 release or later.

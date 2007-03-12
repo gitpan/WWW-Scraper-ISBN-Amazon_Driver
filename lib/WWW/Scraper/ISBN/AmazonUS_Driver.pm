@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.06';
+$VERSION = '0.07';
 
 #--------------------------------------------------------------------------
 
@@ -75,6 +75,8 @@ a valid page is returned, the following fields are returned via the book hash:
 
 The book_link, thumb_link and image_link refer back to the Amazon (US) website. 
 
+=back
+
 =cut
 
 sub search {
@@ -85,7 +87,8 @@ sub search {
 
 	my $mechanize = WWW::Mechanize->new();
 	$mechanize->get( SEARCH );
-	return	unless($mechanize->success());
+    return $self->handler("Amazon website appears to be unavailable.")
+	    unless($mechanize->success());
 
 	# Amazon have a couple of templates for the front page.
 	my @forms = $mechanize->forms;
@@ -101,7 +104,8 @@ sub search {
 	$mechanize->set_fields( 'field-keywords' => $isbn, 'url' => $keyword );
 	$mechanize->submit();
 
-	return	unless($mechanize->success());
+	return $self->handler("Failed to find that book on Amazon website.")
+	    unless($mechanize->success());
 
 	# The Book page
 	my $template = <<END;
@@ -116,7 +120,7 @@ END
 	my $extract = Template::Extract->new;
     my $data = $extract->extract($template, $mechanize->content());
 
-	return $self->handler("Could not extract data from amazon.com result page.")
+	return $self->handler("Could not extract data from Amazon result page.")
 		unless(defined $data);
 
 	# trim top and tail
@@ -145,46 +149,34 @@ END
 1;
 __END__
 
-=back
-
 =head1 REQUIRES
 
 Requires the following modules be installed:
 
-=over 4
-
-=item L<WWW::Scraper::ISBN::Driver>
-
-=item L<WWW::Mechanize>
-
-=item L<Template::Extract>
-
-=back
+L<WWW::Scraper::ISBN::Driver>,
+L<WWW::Mechanize>,
+L<Template::Extract>
 
 =head1 SEE ALSO
 
-=over 4
-
-=item L<WWW::Scraper::ISBN>
-
-=item L<WWW::Scraper::ISBN::Record>
-
-=item L<WWW::Scraper::ISBN::Driver>
-
-=back
+L<WWW::Scraper::ISBN>,
+L<WWW::Scraper::ISBN::Record>,
+L<WWW::Scraper::ISBN::Driver>
 
 =head1 AUTHOR
 
-  Barbie, E<lt>barbie@cpan.orgE<gt>
-  Miss Barbell Productions, L<http://www.missbarbell.co.uk/>
+  Barbie, <barbie@cpan.org>
+  for Miss Barbell Productions <http://www.missbarbell.co.uk>.
 
-=head1 COPYRIGHT
+=head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2004-2005 Barbie for Miss Barbell Productions
-  All Rights Reserved.
+  Copyright (C) 2004-2007 Barbie for Miss Barbell Productions
 
   This module is free software; you can redistribute it and/or 
   modify it under the same terms as Perl itself.
 
-=cut
+The full text of the licenses can be found in the F<Artistic> file included 
+with this module, or in L<perlartistic> as part of Perl installation, in 
+the 5.8.1 release or later.
 
+=cut

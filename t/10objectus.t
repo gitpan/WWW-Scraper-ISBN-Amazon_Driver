@@ -28,7 +28,7 @@ use Test::More tests => 21;
 		like($book->{'thumb_link'},qr!amazon.com/images/P/\d+\.\d+\.\w+\.jpg!);
 		is($book->{'publisher'},'Addison-Wesley Professional');
 		is($book->{'pubdate'},'March 5, 2004');
-		like($book->{'book_link'},qr!^http://www.amazon.com/Perl-Medic-Transforming-Legacy-Code/!);
+		like($book->{'book_link'},qr!^http://www.amazon.com/(Perl-Medic-Transforming-Legacy-Code|s/ref=wbnavss/.*?field-keywords=0201795264)!);
 	}
 
 	$isbn = "0672320673";
@@ -48,7 +48,7 @@ use Test::More tests => 21;
 		like($book->{'thumb_link'},qr!amazon.com/images/P/\d+\.\d+\.\w+\.jpg!);
 		is($book->{'publisher'},'Sams');
 		is($book->{'pubdate'},'July 18, 2001');
-		like($book->{'book_link'},qr!^http://www.amazon.com/Perl-Developers-Dictionary!);
+		like($book->{'book_link'},qr!^http://www.amazon.com/(Perl-Developers-Dictionary-Clinton-Pierce|s/ref=wbnavss/.*?field-keywords=0672320673)!);
 	}
 
 ###########################################################

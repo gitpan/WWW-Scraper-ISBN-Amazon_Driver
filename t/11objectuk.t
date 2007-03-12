@@ -24,11 +24,11 @@ use Test::More tests => 21;
 		is($book->{'isbn'},'0201795264');
 		is($book->{'title'},'Perl Medic: Maintaining Inherited Code');
 		is($book->{'author'},'Peter Scott');
-		is($book->{'image_link'},'http://images-eu.amazon.com/images/P/0201795264.02.LZZZZZZZ.jpg');
-		is($book->{'thumb_link'},'http://images-eu.amazon.com/images/P/0201795264.02._PE30_SCMZZZZZZZ_.jpg');
+		like($book->{'image_link'},qr!http://www.amazon.co.uk/gp/product/images!);
+		like($book->{'thumb_link'},qr!http://ec\d.images-amazon.com/images!);
 		is($book->{'publisher'},'Addison Wesley');
-		is($book->{'pubdate'},'March 18, 2004');
-		like($book->{'book_link'},qr!^http://www.amazon.co.uk/exec/obidos/!);
+		is($book->{'pubdate'},'30 April 2004');
+		like($book->{'book_link'},qr!^http://www.amazon.co.uk/(Perl-Medic-Transforming-Legacy-Code|s/ref=nb_ss_w_h_/.*?field-keywords=0201795264)!);
 	}
 
 	$isbn = "0672320673";
@@ -44,11 +44,11 @@ use Test::More tests => 21;
 		is($book->{'isbn'},'0672320673');
 		is($book->{'title'},q|Perl Developer's Dictionary|);
 		is($book->{'author'},'Clinton Pierce');
-		is($book->{'image_link'},'http://images-eu.amazon.com/images/P/0672320673.02.LZZZZZZZ.jpg');
-		is($book->{'thumb_link'},'http://images-eu.amazon.com/images/P/0672320673.02.MZZZZZZZ.jpg');
+		like($book->{'image_link'},qr!http://www.amazon.co.uk/gp/product/images!);
+		like($book->{'thumb_link'},qr!http://ec\d.images-amazon.com/images!);
 		is($book->{'publisher'},'Sams');
-		is($book->{'pubdate'},'July 1, 2001');
-		like($book->{'book_link'},qr!^http://www.amazon.co.uk/exec/obidos/!);
+		is($book->{'pubdate'},'Jul 2001');
+		like($book->{'book_link'},qr!^http://www.amazon.co.uk/(Perl-Developers-Dictionary-Clinton-Pierce|s/ref=nb_ss_w_h_/.*?field-keywords=0672320673)!);
 	}
 
 ###########################################################

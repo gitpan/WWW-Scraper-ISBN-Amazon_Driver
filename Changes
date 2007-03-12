@@ -1,5 +1,17 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Amazon_Driver.
 
+0.07	01/03/2007
+	- Handwritten META.yml to conform to current specs.
+	- Changed all instances of LICENCE to LICENSE.
+	- Added META.yml test script.
+	- Added LICENSE and Artistic files.
+	- Added an examples directory. Nothing in it yet, except a request
+	  for interesting scripts.
+	- Updated the pattern matching code as Amazon UK have changed 
+	  their page layouts.
+	- Added better error checking and reporting.
+	- Devel::Cover = 95.6%
+
 0.06	11/10/2006
 	- Fixed US/UK website link changes
 	- Devel::Cover - 89.7%

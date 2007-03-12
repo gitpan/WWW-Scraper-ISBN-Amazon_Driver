@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.06';
+$VERSION = '0.07';
 
 #--------------------------------------------------------------------------
 
@@ -87,33 +87,33 @@ sub search {
 
 	my $mechanize = WWW::Mechanize->new();
 	$mechanize->get( SEARCH );
-	return	unless($mechanize->success());
+    return $self->handler("Amazon website appears to be unavailable.")
+	    unless($mechanize->success());
 
 	$mechanize->form_number(1);
 	$mechanize->set_fields( 'field-keywords' => $isbn, 'url' => 'search-alias=stripbooks' );
 	$mechanize->submit();
 
-	return	unless($mechanize->success());
+	return $self->handler("Failed to find that book on Amazon website.")
+	    unless($mechanize->success());
 
 	# The Book page
 	my $template = <<END;
-<META name="description" content="[% title %], [% author %], [% ... %]">[% ... %]
-<form method=POST action=[% ... %]handle-buy-box[% ... %]>
-<a href="[% image_link %]"><img src="[% thumb_link %]" [% ... %]
-pages
-([% pubdate %])
-<li>
-<b>Publisher:</b> [% publisher %]
-<li>
-<b>ISBN:</b>[% isbn %]
-
-</li>
+<title>Amazon.co.uk: [% title %]: Books: [% author %]</title>[% ... %]
+registerImage("original_image", "[% thumb_link %]"[% ... %]
+amz_js_PopWin('[% image_link %]'[% ... %]
+Product details[% ... %]
+<b>Publisher:</b> [% publisher %] ([% pubdate %])[% ... %]
+<li><b>ISBN-10:</b> [% isbn10 %]</li>[% ... %]
+<li><b>ISBN-13:</b> [% isbn13 %]</li>[% ... %]
 END
 
-	my $extract = Template::Extract->new;
+#print STDERR "\n# content1=[".$mechanize->content()."]\n";
+
+    my $extract = Template::Extract->new;
     my $data = $extract->extract($template, $mechanize->content());
 
-	return $self->handler("Could not extract data from amazon.co.uk result page.")
+	return $self->handler("Could not extract data from Amazon result page.")
 		unless(defined $data);
 
 	# trim top and tail
@@ -121,7 +121,8 @@ END
 	$data->{pubdate} =~ s/^.*?\(//;
 
 	my $bk = {
-		'isbn'			=> $data->{isbn},
+		'isbn13'		=> $data->{isbn13},
+		'isbn'			=> $data->{isbn10},
 		'author'		=> $data->{author},
 		'title'			=> $data->{title},
 		'image_link'	=> $data->{image_link},
@@ -142,40 +143,30 @@ __END__
 
 Requires the following modules be installed:
 
-=over 4
-
-=item L<WWW::Scraper::ISBN::Driver>
-
-=item L<WWW::Mechanize>
-
-=item L<Template::Extract>
-
-=back
+L<WWW::Scraper::ISBN::Driver>,
+L<WWW::Mechanize>,
+L<Template::Extract>
 
 =head1 SEE ALSO
 
-=over 4
-
-=item L<WWW::Scraper::ISBN>
-
-=item L<WWW::Scraper::ISBN::Record>
-
-=item L<WWW::Scraper::ISBN::Driver>
-
-=back
+L<WWW::Scraper::ISBN>,
+L<WWW::Scraper::ISBN::Record>,
+L<WWW::Scraper::ISBN::Driver>
 
 =head1 AUTHOR
 
-  Barbie, E<lt>barbie@cpan.orgE<gt>
-  Miss Barbell Productions, L<http://www.missbarbell.co.uk/>
+  Barbie, <barbie@cpan.org>
+  for Miss Barbell Productions <http://www.missbarbell.co.uk>.
 
-=head1 COPYRIGHT
+=head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2004-2005 Barbie for Miss Barbell Productions
-  All Rights Reserved.
+  Copyright (C) 2004-2007 Barbie for Miss Barbell Productions
 
   This module is free software; you can redistribute it and/or 
   modify it under the same terms as Perl itself.
 
-=cut
+The full text of the licenses can be found in the F<Artistic> file included 
+with this module, or in L<perlartistic> as part of Perl installation, in 
+the 5.8.1 release or later.
 
+=cut
