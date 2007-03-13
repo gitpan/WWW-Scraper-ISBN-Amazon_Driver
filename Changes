@@ -1,5 +1,9 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Amazon_Driver.
 
+0.08	13/03/2007
+	- Amazon apear to change their URLs on a daily basis, as such the URL
+	  tests have been updated ... again!
+
 0.07	01/03/2007
 	- Handwritten META.yml to conform to current specs.
 	- Changed all instances of LICENCE to LICENSE.
