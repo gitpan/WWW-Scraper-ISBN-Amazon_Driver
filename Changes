@@ -1,7 +1,12 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Amazon_Driver.
 
+0.09	26/07/2007
+	- Amazon image links have changed again.
+	- Amazon UK full size image link popup has changed again
+	- more tests modified due to the change in text used on pages.
+
 0.08	13/03/2007
-	- Amazon apear to change their URLs on a daily basis, as such the URL
+	- Amazon appear to change their URLs on a daily basis, as such the URL
 	  tests have been updated ... again!
 
 0.07	01/03/2007

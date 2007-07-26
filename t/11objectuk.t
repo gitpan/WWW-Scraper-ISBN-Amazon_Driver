@@ -27,7 +27,7 @@ use Test::More tests => 21;
 		like($book->{'image_link'},qr!http://www.amazon.co.uk/gp/product/images!);
 		like($book->{'thumb_link'},qr!http://ec\d.images-amazon.com/images!);
 		is($book->{'publisher'},'Addison Wesley');
-		is($book->{'pubdate'},'30 April 2004');
+		like($book->{'pubdate'},qr/2004$/);     # this date fluctuates throughout Mar/Apr 2004!
 		like($book->{'book_link'},qr!^http://www.amazon.co.uk/(Perl-Medic|s/ref=nb_ss_w_h_/.*?field-keywords=0201795264)!);
 	}
 
@@ -45,9 +45,9 @@ use Test::More tests => 21;
 		is($book->{'title'},q|Perl Developer's Dictionary|);
 		is($book->{'author'},'Clinton Pierce');
 		like($book->{'image_link'},qr!http://www.amazon.co.uk/gp/product/images!);
-		like($book->{'thumb_link'},qr!http://ec\d.images-amazon.com/images!);
-		is($book->{'publisher'},'Sams');
-		is($book->{'pubdate'},'Jul 2001');
+		like($book->{'thumb_link'},qr!http://[-\w]+.images-amazon.com/images!);
+		like($book->{'publisher'},qr/^Sams/);   # publisher name changes!
+		like($book->{'pubdate'},qr/Jul 2001$/); # this dates fluctuates throughout Jul 2004!
 		like($book->{'book_link'},qr!^http://www.amazon.co.uk/(Perl-Developers-Dictionary|s/ref=nb_ss_w_h_/.*?field-keywords=0672320673)!);
 	}
 

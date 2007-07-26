@@ -1,7 +1,7 @@
 use ExtUtils::MakeMaker;
 WriteMakefile(
     'NAME'		=> 'WWW::Scraper::ISBN::Amazon_Driver',
-    'VERSION'	=> '0.08',
+    'VERSION'	=> '0.09',
     'PREREQ_PM'		=> {
 
 		WWW::Scraper::ISBN			=> 0.25,

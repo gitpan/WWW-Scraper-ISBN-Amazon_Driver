@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.08';
+$VERSION = '0.09';
 
 #--------------------------------------------------------------------------
 
@@ -87,33 +87,35 @@ sub search {
 
 	my $mechanize = WWW::Mechanize->new();
 	$mechanize->get( SEARCH );
-    return $self->handler("Amazon website appears to be unavailable.")
+    return $self->handler("Amazon UK website appears to be unavailable.")
 	    unless($mechanize->success());
 
-	$mechanize->form_number(1);
+#print STDERR "\n# content1=[".$mechanize->content()."]\n";
+
+    $mechanize->form_number(1);
 	$mechanize->set_fields( 'field-keywords' => $isbn, 'url' => 'search-alias=stripbooks' );
 	$mechanize->submit();
 
-	return $self->handler("Failed to find that book on Amazon website.")
+	return $self->handler("Failed to find that book on Amazon UK website.")
 	    unless($mechanize->success());
 
 	# The Book page
 	my $template = <<END;
 <title>Amazon.co.uk: [% title %]: Books: [% author %]</title>[% ... %]
 registerImage("original_image", "[% thumb_link %]"[% ... %]
-amz_js_PopWin('[% image_link %]'[% ... %]
+<a href="+'"'+"[% image_link %]"[% ... %]
 Product details[% ... %]
 <b>Publisher:</b> [% publisher %] ([% pubdate %])[% ... %]
 <li><b>ISBN-10:</b> [% isbn10 %]</li>[% ... %]
 <li><b>ISBN-13:</b> [% isbn13 %]</li>[% ... %]
 END
 
-#print STDERR "\n# content1=[".$mechanize->content()."]\n";
+#print STDERR "\n# content2=[".$mechanize->content()."]\n";
 
     my $extract = Template::Extract->new;
     my $data = $extract->extract($template, $mechanize->content());
 
-	return $self->handler("Could not extract data from Amazon result page.")
+	return $self->handler("Could not extract data from Amazon UK result page.")
 		unless(defined $data);
 
 	# trim top and tail

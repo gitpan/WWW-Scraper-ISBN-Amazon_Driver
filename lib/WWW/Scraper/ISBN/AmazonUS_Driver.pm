@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.08';
+$VERSION = '0.09';
 
 #--------------------------------------------------------------------------
 
@@ -87,7 +87,7 @@ sub search {
 
 	my $mechanize = WWW::Mechanize->new();
 	$mechanize->get( SEARCH );
-    return $self->handler("Amazon website appears to be unavailable.")
+    return $self->handler("Amazon US website appears to be unavailable.")
 	    unless($mechanize->success());
 
 	# Amazon have a couple of templates for the front page.
@@ -104,7 +104,7 @@ sub search {
 	$mechanize->set_fields( 'field-keywords' => $isbn, 'url' => $keyword );
 	$mechanize->submit();
 
-	return $self->handler("Failed to find that book on Amazon website.")
+	return $self->handler("Failed to find that book on Amazon US website.")
 	    unless($mechanize->success());
 
 	# The Book page
@@ -120,7 +120,7 @@ END
 	my $extract = Template::Extract->new;
     my $data = $extract->extract($template, $mechanize->content());
 
-	return $self->handler("Could not extract data from Amazon result page.")
+	return $self->handler("Could not extract data from Amazon US result page.")
 		unless(defined $data);
 
 	# trim top and tail
