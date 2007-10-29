@@ -1,7 +1,11 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Amazon_Driver.
 
+0.11	29/10/2007
+	- fixed further pattern matching in tests, thanks to testing by 
+	  David Cantrell.
+
 0.10	27/07/2007
-	- fixed image link patterm matcjing in tests, thanks to testing by 
+	- fixed image link pattern matching in tests, thanks to testing by 
 	  David Cantrell and Chris Williams.
 
 0.09	26/07/2007
