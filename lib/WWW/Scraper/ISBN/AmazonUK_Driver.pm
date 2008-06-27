@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.11';
+$VERSION = '0.12';
 
 #--------------------------------------------------------------------------
 
@@ -73,7 +73,7 @@ a valid page is returned, the following fields are returned via the book hash:
   pubdate
   publisher
 
-The book_link, thumb_link and image_link refer back to the Amazon (UK) website. 
+The book_link, thumb_link and image_link refer back to the Amazon (UK) website.
 
 =back
 
@@ -101,7 +101,7 @@ sub search {
 
 	# The Book page
 	my $template = <<END;
-<title>Amazon.co.uk: [% title %]: Books: [% author %]</title>[% ... %]
+<title>Amazon.co.uk: [% content %]: Books</title>[% ... %]
 registerImage("original_image", "[% thumb_link %]"[% ... %]
 <a href="+'"'+"[% image_link %]"[% ... %]
 Product details[% ... %]
@@ -118,7 +118,9 @@ END
 	return $self->handler("Could not extract data from Amazon UK result page.")
 		unless(defined $data);
 
-	# trim top and tail
+	($data->{title},$data->{author}) = ($data->{content} =~ /\s*(.*?)(?:\s+by|,|:)\s+([^:]+)\s*$/)  unless($data->{author});
+
+    # trim top and tail
 	foreach (keys %$data) { $data->{$_} =~ s/^\s+//;$data->{$_} =~ s/\s+$//; }
 	$data->{pubdate} =~ s/^.*?\(//;
 
@@ -164,11 +166,11 @@ L<WWW::Scraper::ISBN::Driver>
 
   Copyright (C) 2004-2007 Barbie for Miss Barbell Productions
 
-  This module is free software; you can redistribute it and/or 
+  This module is free software; you can redistribute it and/or
   modify it under the same terms as Perl itself.
 
-The full text of the licenses can be found in the F<Artistic> file included 
-with this module, or in L<perlartistic> as part of Perl installation, in 
+The full text of the licenses can be found in the F<Artistic> file included
+with this module, or in L<perlartistic> as part of Perl installation, in
 the 5.8.1 release or later.
 
 =cut

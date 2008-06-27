@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.11';
+$VERSION = '0.12';
 
 #--------------------------------------------------------------------------
 
@@ -73,7 +73,7 @@ a valid page is returned, the following fields are returned via the book hash:
   pubdate
   publisher
 
-The book_link, thumb_link and image_link refer back to the Amazon (US) website. 
+The book_link, thumb_link and image_link refer back to the Amazon (US) website.
 
 =back
 
@@ -126,9 +126,11 @@ END
 	# trim top and tail
 	foreach (keys %$data) { $data->{$_} =~ s/^\s+//;$data->{$_} =~ s/\s+$//; }
 
-	($data->{title},$data->{author}) = 
-		($data->{content} =~ /(?:Amazon.com: Books: )?\s*(.*?)(?:\s+by|,)\s+(.*)/);
-	($data->{publisher},$data->{pubdate}) = 
+    # Note: as the page changes, the older matches are now retained in the
+    # event that these are ever reused.
+	($data->{title},$data->{author}) = ($data->{content} =~ /(?:Amazon.com: Books: )?\s*(.*?)(?:\s+by|,)\s+(.*)/);
+	($data->{title},$data->{author}) = ($data->{content} =~ /(?:Amazon.com:)?\s*(.*?)(?:\s+by|,|:)\s+([^:]+): Books$/)  unless($data->{author});
+	($data->{publisher},$data->{pubdate}) =
 		($data->{published} =~ /\s*(.*?)(?:;.*?)?\s+\((.*?)\)/);
 
 	my $bk = {
@@ -139,7 +141,8 @@ END
 		'thumb_link'	=> $data->{thumb_link},
 		'publisher'		=> $data->{publisher},
 		'pubdate'		=> $data->{pubdate},
-		'book_link'		=> $mechanize->uri()
+		'book_link'		=> $mechanize->uri(),
+		'content'		=> $data->{content}
 	};
 	$self->book($bk);
 	$self->found(1);
@@ -172,11 +175,11 @@ L<WWW::Scraper::ISBN::Driver>
 
   Copyright (C) 2004-2007 Barbie for Miss Barbell Productions
 
-  This module is free software; you can redistribute it and/or 
+  This module is free software; you can redistribute it and/or
   modify it under the same terms as Perl itself.
 
-The full text of the licenses can be found in the F<Artistic> file included 
-with this module, or in L<perlartistic> as part of Perl installation, in 
+The full text of the licenses can be found in the F<Artistic> file included
+with this module, or in L<perlartistic> as part of Perl installation, in
 the 5.8.1 release or later.
 
 =cut

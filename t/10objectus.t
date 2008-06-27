@@ -29,6 +29,8 @@ use Test::More tests => 21;
 		like($book->{'image_link'}, qr!^http://www.amazon.com/gp/product/images!);
 		like($book->{'thumb_link'}, qr!http://[-\w]+.images-amazon.com/images/[-\w/.]+\.jpg!);
 		like($book->{'book_link'},  qr!^http://www.amazon.com/(Perl-Medic|s/ref=wbnavss/.*?field-keywords=0201795264)!);
+#        diag("book content=[$book->{content}]");
+#        diag("book link=[$book->{book_link}]");
 	}
 
 	$isbn = "0672320673";
@@ -49,6 +51,8 @@ use Test::More tests => 21;
 		like($book->{'image_link'}, qr!^http://www.amazon.com/gp/product/images!);
 		like($book->{'thumb_link'}, qr!http://[-\w]+.images-amazon.com/images/[-\w/.]+\.jpg!);
 		like($book->{'book_link'},  qr!^http://www.amazon.com/(Perl-Developers-Dictionary|s/ref=wbnavss/.*?field-keywords=0672320673)!);
+#        diag("book content=[$book->{content}]");
+#        diag("book link=[$book->{book_link}]");
 	}
 
 ###########################################################
