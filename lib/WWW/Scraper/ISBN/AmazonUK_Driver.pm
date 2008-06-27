@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.12';
+$VERSION = '0.13';
 
 #--------------------------------------------------------------------------
 
@@ -123,9 +123,11 @@ END
     # trim top and tail
 	foreach (keys %$data) { $data->{$_} =~ s/^\s+//;$data->{$_} =~ s/\s+$//; }
 	$data->{pubdate} =~ s/^.*?\(//;
+    $data->{isbn13} =~ s/-//g;
 
 	my $bk = {
 		'isbn13'		=> $data->{isbn13},
+		'isbn10'		=> $data->{isbn10},
 		'isbn'			=> $data->{isbn10},
 		'author'		=> $data->{author},
 		'title'			=> $data->{title},

@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.12';
+$VERSION = '0.13';
 
 #--------------------------------------------------------------------------
 
@@ -114,11 +114,15 @@ sub search {
 <div style=[% ... %]
 registerImage("original_image", "[% thumb_link %]", "<a href="+'"'+"[% image_link %]"+[% ... %]
 <b class="h1">Product Details</b><br />[% ... %]
-<li><b>Publisher:</b>[% published %]</li>
+<li><b>Publisher:</b>[% published %]</li>[% ... %]
+<li><b>ISBN-10:</b> [% isbn10 %]</li>[% ... %]
+<li><b>ISBN-13:</b> [% isbn13 %]</li>
 END
 
 	my $extract = Template::Extract->new;
     my $data = $extract->extract($template, $mechanize->content());
+
+    #print STDERR "\n#".$mechanize->content();
 
 	return $self->handler("Could not extract data from Amazon US result page.")
 		unless(defined $data);
@@ -132,9 +136,12 @@ END
 	($data->{title},$data->{author}) = ($data->{content} =~ /(?:Amazon.com:)?\s*(.*?)(?:\s+by|,|:)\s+([^:]+): Books$/)  unless($data->{author});
 	($data->{publisher},$data->{pubdate}) =
 		($data->{published} =~ /\s*(.*?)(?:;.*?)?\s+\((.*?)\)/);
+    $data->{isbn13} =~ s/-//g;
 
 	my $bk = {
-		'isbn'			=> $isbn,
+		'isbn13'		=> $data->{isbn13},
+		'isbn10'		=> $data->{isbn10},
+		'isbn'			=> $data->{isbn10},
 		'author'		=> $data->{author},
 		'title'			=> $data->{title},
 		'image_link'	=> $data->{image_link},

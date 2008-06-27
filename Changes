@@ -1,7 +1,11 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Amazon_Driver.
 
-0.12	current
-	- added checks to only run extra test under AUTOMATED_TESTING
+0.13	27/06/2008
+	- added ISBN10 and ISBN13 keys to book data
+	- added tests to check for ISBN10 and ISBN13 searches
+
+0.12	27/06/2008
+	- added checks to only run extra tests under AUTOMATED_TESTING
 	- switched metatest to use Test-CPAN-Meta
 	- upped META.ym spec version and link
 	- fixed US/UK content extraction
