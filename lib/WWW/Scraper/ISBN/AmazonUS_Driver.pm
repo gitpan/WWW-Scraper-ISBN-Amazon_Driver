@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.13';
+$VERSION = '0.14';
 
 #--------------------------------------------------------------------------
 
@@ -113,7 +113,6 @@ sub search {
 <div class="buying">[% ... %]
 <div style=[% ... %]
 registerImage("original_image", "[% thumb_link %]", "<a href="+'"'+"[% image_link %]"+[% ... %]
-<b class="h1">Product Details</b><br />[% ... %]
 <li><b>Publisher:</b>[% published %]</li>[% ... %]
 <li><b>ISBN-10:</b> [% isbn10 %]</li>[% ... %]
 <li><b>ISBN-13:</b> [% isbn13 %]</li>

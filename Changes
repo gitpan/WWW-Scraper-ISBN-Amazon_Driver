@@ -1,5 +1,8 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Amazon_Driver.
 
+0.14	17/11/2008
+	- minor fix to parsing Amazon US site.
+
 0.13	27/06/2008
 	- added ISBN10 and ISBN13 keys to book data
 	- added tests to check for ISBN10 and ISBN13 searches

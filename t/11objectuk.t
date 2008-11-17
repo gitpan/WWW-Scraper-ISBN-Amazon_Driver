@@ -33,7 +33,7 @@ use Test::More tests => 23;
 		like($book->{'author'},     qr!Peter.*Scott!);
 		like($book->{'image_link'}, qr!http://www.amazon.co.uk/gp/product/images!);
 		like($book->{'thumb_link'}, qr!http://[-\w]+.images-amazon.com/images/[-\w/.]+\.jpg!);
-		like($book->{'book_link'},  qr!^http://www.amazon.co.uk/(Perl-Medic|s/ref=nb_ss_w_h_/.*?field-keywords=(0201795264|9780201795264))!);
+		like($book->{'book_link'},  qr!^http://www.amazon.co.uk/(Perl-Medic|.*?field-keywords=(0201795264|9780201795264))!);
 #        diag("book link=[$book->{book_link}]");
 	}
 
@@ -58,7 +58,7 @@ use Test::More tests => 23;
 		like($book->{'title'},      qr!Perl Developer\'s Dictionary!);
 		like($book->{'image_link'}, qr!http://www.amazon.co.uk/gp/product/images!);
 		like($book->{'thumb_link'}, qr!http://[-\w]+.images-amazon.com/images/[-\w/.]+\.jpg!);
-		like($book->{'book_link'},  qr!^http://www.amazon.co.uk/(Perl-Developers-Dictionary|s/ref=nb_ss_w_h_/.*?field-keywords=(0672320673|9780672320675))!);
+		like($book->{'book_link'},  qr!^http://www.amazon.co.uk/(Perl-Developers-Dictionary|.*?field-keywords=(0672320673|9780672320675))!);
 #        diag("book link=[$book->{book_link}]");
 	}
 
