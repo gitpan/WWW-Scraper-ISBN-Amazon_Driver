@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.14';
+$VERSION = '0.15';
 
 #--------------------------------------------------------------------------
 
@@ -86,21 +86,16 @@ sub search {
 	$self->book(undef);
 
 	my $mechanize = WWW::Mechanize->new();
+    $mechanize->agent_alias( 'Linux Mozilla' );
 	$mechanize->get( SEARCH );
     return $self->handler("Amazon US website appears to be unavailable.")
 	    unless($mechanize->success());
 
-	# Amazon have a couple of templates for the front page.
-	my @forms = $mechanize->forms;
-	my ($index,$input) = (0,0);
-	foreach my $form (@forms) {
-		$index++;
-		$input = $index	if($form->find_input('field-keywords'));
-	}
-
 	my $content = $mechanize->content();
-	my ($keyword) = ($content =~ /<option value="(index=stripbooks.*?)">Books/);
-	$mechanize->form_number($input);
+    #print STDERR "\n#".$mechanize->content();
+
+	my ($keyword) = ($content =~ /<option value="(.*?stripbooks.*?)">Books/);
+	$mechanize->form_name('site-search');
 	$mechanize->set_fields( 'field-keywords' => $isbn, 'url' => $keyword );
 	$mechanize->submit();
 

@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.14';
+$VERSION = '0.15';
 
 #--------------------------------------------------------------------------
 
@@ -86,13 +86,16 @@ sub search {
 	$self->book(undef);
 
 	my $mechanize = WWW::Mechanize->new();
+    $mechanize->agent_alias( 'Linux Mozilla' );
 	$mechanize->get( SEARCH );
     return $self->handler("Amazon UK website appears to be unavailable.")
 	    unless($mechanize->success());
 
+	my $content = $mechanize->content();
 #print STDERR "\n# content1=[".$mechanize->content()."]\n";
 
-    $mechanize->form_number(1);
+	my ($keyword) = ($content =~ /<option value="(.*?stripbooks.*?)">Books/);
+	$mechanize->form_name('site-search');
 	$mechanize->set_fields( 'field-keywords' => $isbn, 'url' => 'search-alias=stripbooks' );
 	$mechanize->submit();
 
@@ -101,7 +104,7 @@ sub search {
 
 	# The Book page
 	my $template = <<END;
-<title>Amazon.co.uk: [% content %]: Books</title>[% ... %]
+<title>[% content %]</title>[% ... %]
 registerImage("original_image", "[% thumb_link %]"[% ... %]
 <a href="+'"'+"[% image_link %]"[% ... %]
 Product details[% ... %]
@@ -118,6 +121,8 @@ END
 	return $self->handler("Could not extract data from Amazon UK result page.")
 		unless(defined $data);
 
+    $data->{content} =~ s/Amazon\.co\.uk.*?://i;
+    $data->{content} =~ s/: Books.*//i;
 	($data->{title},$data->{author}) = ($data->{content} =~ /\s*(.*?)(?:\s+by|,|:)\s+([^:]+)\s*$/)  unless($data->{author});
 
     # trim top and tail

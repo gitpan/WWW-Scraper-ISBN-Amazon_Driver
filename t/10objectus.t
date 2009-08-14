@@ -6,21 +6,23 @@ use Test::More tests => 23;
 
 ###########################################################
 
-	use WWW::Scraper::ISBN;
-	my $scraper = WWW::Scraper::ISBN->new();
-	isa_ok($scraper,'WWW::Scraper::ISBN');
+use WWW::Scraper::ISBN;
+my $scraper = WWW::Scraper::ISBN->new();
+isa_ok($scraper,'WWW::Scraper::ISBN');
+
+SKIP: {
+	skip "Can't see a network connection", 22   if(pingtest());
 
 	$scraper->drivers("AmazonUS");
-
 
     # search with an ISBN 10 value
 
 	my $isbn = "0201795264";
 	my $record = $scraper->search($isbn);
 
-	SKIP: {
-		skip($record->error . "\n",10)	unless($record->found);
-
+    unless($record->found) {
+		diag($record->error);
+    } else {
 		is($record->found,1);
 		is($record->found_in,'AmazonUS');
 
@@ -34,19 +36,19 @@ use Test::More tests => 23;
 		like($book->{'image_link'}, qr!^http://www.amazon.com/gp/product/images!);
 		like($book->{'thumb_link'}, qr!http://[-\w]+.images-amazon.com/images/[-\w/.]+\.jpg!);
 		like($book->{'book_link'},  qr!^http://www.amazon.com/(Perl-Medic|.*?field-keywords=(0201795264|9780201795264))!);
-#        diag("book content=[$book->{content}]");
-#        diag("book link=[$book->{book_link}]");
-	}
 
+        #use Data::Dumper;
+        #diag("book=[".Dumper($book)."]");
+	}
 
     # search with an ISBN 13 value
 
 	$isbn = "9780672320675";
 	$record = $scraper->search($isbn);
 
-	SKIP: {
-		skip($record->error . "\n",10)	unless($record->found);
-
+    unless($record->found) {
+		diag($record->error);
+    } else {
 		is($record->found(),1);
 		is($record->found_in(),'AmazonUS');
 
@@ -60,9 +62,18 @@ use Test::More tests => 23;
 		like($book->{'image_link'}, qr!^http://www.amazon.com/gp/product/images!);
 		like($book->{'thumb_link'}, qr!http://[-\w]+.images-amazon.com/images/[-\w/.]+\.jpg!);
 		like($book->{'book_link'},  qr!^http://www.amazon.com/(Perl-Developers-Dictionary|.*?field-keywords=(0672320673|9780672320675))!);
-#        diag("book content=[$book->{content}]");
-#        diag("book link=[$book->{book_link}]");
+
+        #use Data::Dumper;
+        #diag("book=[".Dumper($book)."]");
 	}
+}
 
 ###########################################################
 
+# crude, but it'll hopefully do ;)
+sub pingtest {
+  system("ping -q -c 1 www.google.com >/dev/null 2>&1");
+  my $retcode = $? >> 8;
+  # ping returns 1 if unable to connect
+  return $retcode;
+}

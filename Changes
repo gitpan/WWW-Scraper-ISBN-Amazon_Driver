@@ -1,5 +1,11 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Amazon_Driver.
 
+0.15	14/08/2009
+	- minor fixes to parsing of both Amazon US & UK sites.
+	- added ping tests, to avoid failing when no network connection.
+	- real failures produce diagnostics not skips now.
+	- added more package tests.
+
 0.14	17/11/2008
 	- minor fix to parsing Amazon US site.
 
