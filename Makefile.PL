@@ -6,7 +6,6 @@ WriteMakefile(
 		WWW::Scraper::ISBN			=> 0.25,
 		WWW::Scraper::ISBN::Driver	=> 0.18,
 		WWW::Mechanize				=> 0,
-		Template::Extract			=> 0,
 		Test::More					=> 0.45,	# for testing
 	},
 	NO_META			=> 1,

@@ -1,7 +1,7 @@
-Artistic
 Changes
 LICENSE
 MANIFEST
+META.json
 META.yml
 Makefile.PL
 README
@@ -16,3 +16,4 @@ t/91podcover.t
 t/92distribution.t
 t/94metatest.t
 t/95changedate.t
+t/96metatest.t

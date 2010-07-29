@@ -1,0 +1,61 @@
+{
+    "name": "WWW-Scraper-ISBN-Amazon_Driver",
+    "version": "0.16",
+    "abstract": "Search drivers for the Amazon online catalog.",
+    "author": ["Barbie <barbie@cpan.org>"],
+
+    "license": "artistic_2",
+    "dynamic_config" : 0,
+    "release_status" : "stable",
+    "meta-spec": {
+        "version": "2",
+        "url": "http://search.cpan.org/dist/CPAN-Meta/lib/CPAN/Meta/Spec.pm"
+    },
+    "generated_by": "Hand 1.0",
+    "keywords" : [
+        "isbn",
+        "books",
+        "scraper"
+    ],
+
+    "prereqs" : {
+        "runtime" : {
+            "requires" : {
+                "WWW::Mechanize": "0",
+                "WWW::Scraper::ISBN": "0.25",
+                "WWW::Scraper::ISBN::Driver": "0.18"
+            }
+        },
+        "test" : {
+            "requires": {
+                "Test::More": "0.62"
+            },
+            "recommends": {
+                "Test::More": "0.70",
+                "Test::Pod": "1.00",
+                "Test::Pod::Coverage": "0.08",
+                "Test::CPAN::Meta": "0.13",
+                "Test::JSON::Meta": "0.08"
+            }
+        }
+    },
+
+    "provides": {
+        "WWW::Scraper::ISBN::AmazonUK_Driver": {
+            "file": "lib/WWW/Scraper/ISBN/AmazonUK_Driver.pm",
+            "version": "0.16"
+        },
+        "WWW::Scraper::ISBN::AmazonUS_Driver": {
+            "file": "lib/WWW/Scraper/ISBN/AmazonUS_Driver.pm",
+            "version": "0.16"
+        }
+    },
+    "no_index": {
+        "directory": ["t","examples"]
+    },
+
+    "resources": {
+        "license": "http://dev.perl.org/licenses/",
+        "bugtracker": { "web": "http://rt.cpan.org/Public/Dist/Display.html?Name=WWW-Scraper-ISBN-Amazon_Driver" }
+    }
+}

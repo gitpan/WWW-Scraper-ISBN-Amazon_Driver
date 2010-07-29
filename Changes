@@ -1,72 +1,80 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Amazon_Driver.
 
+0.16	29/07/2010
+        - updates to parses for both Amazon US & UK sites.
+        - added fields (if known) for binding, pages, weight, width & height.
+        - added ean13, which is the industry name for isbn-13.
+        - more tests.
+        - removal of Template::Extract in favour of plain regexes.
+        - various package file changes (inc adding META.json).
+
 0.15	14/08/2009
-	- minor fixes to parsing of both Amazon US & UK sites.
-	- added ping tests, to avoid failing when no network connection.
-	- real failures produce diagnostics not skips now.
-	- added more package tests.
+	    - minor fixes to parsing of both Amazon US & UK sites.
+	    - added ping tests, to avoid failing when no network connection.
+	    - real failures produce diagnostics not skips now.
+	    - added more package tests.
 
 0.14	17/11/2008
-	- minor fix to parsing Amazon US site.
+	    - minor fix to parsing Amazon US site.
 
 0.13	27/06/2008
-	- added ISBN10 and ISBN13 keys to book data
-	- added tests to check for ISBN10 and ISBN13 searches
+	    - added ISBN10 and ISBN13 keys to book data
+	    - added tests to check for ISBN10 and ISBN13 searches
 
 0.12	27/06/2008
-	- added checks to only run extra tests under AUTOMATED_TESTING
-	- switched metatest to use Test-CPAN-Meta
-	- upped META.ym spec version and link
-	- fixed US/UK content extraction
+	    - added checks to only run extra tests under AUTOMATED_TESTING
+	    - switched metatest to use Test-CPAN-Meta
+	    - upped META.ym spec version and link
+	    - fixed US/UK content extraction
 
 0.11	29/10/2007
-	- fixed further pattern matching in tests, thanks to testing by 
-	  David Cantrell.
+	    - fixed further pattern matching in tests, thanks to testing by 
+	      David Cantrell.
 
 0.10	27/07/2007
-	- fixed image link pattern matching in tests, thanks to testing by 
-	  David Cantrell and Chris Williams.
+	    - fixed image link pattern matching in tests, thanks to testing by 
+	      David Cantrell and Chris Williams.
 
 0.09	26/07/2007
-	- Amazon image links have changed again.
-	- Amazon UK full size image link popup has changed again
-	- more tests modified due to the change in text used on pages.
+	    - Amazon image links have changed again.
+	    - Amazon UK full size image link popup has changed again
+	    - more tests modified due to the change in text used on pages.
 
 0.08	13/03/2007
-	- Amazon appear to change their URLs on a daily basis, as such the URL
-	  tests have been updated ... again!
+	    - Amazon appear to change their URLs on a daily basis, as such the URL
+	      tests have been updated ... again!
 
 0.07	01/03/2007
-	- Handwritten META.yml to conform to current specs.
-	- Changed all instances of LICENCE to LICENSE.
-	- Added META.yml test script.
-	- Added LICENSE and Artistic files.
-	- Added an examples directory. Nothing in it yet, except a request
-	  for interesting scripts.
-	- Updated the pattern matching code as Amazon UK have changed 
-	  their page layouts.
-	- Added better error checking and reporting.
-	- Devel::Cover = 95.6%
+	    - Handwritten META.yml to conform to current specs.
+	    - Changed all instances of LICENCE to LICENSE.
+	    - Added META.yml test script.
+	    - Added LICENSE and Artistic files.
+	    - Added an examples directory. Nothing in it yet, except a request
+	      for interesting scripts.
+	    - Updated the pattern matching code as Amazon UK have changed 
+	      their page layouts.
+	    - Added better error checking and reporting.
+	    - Devel::Cover = 95.6%
 
 0.06	11/10/2006
-	- Fixed US/UK website link changes
-	- Devel::Cover - 89.7%
+	    - Fixed US/UK website link changes
+	    - Devel::Cover - 89.7%
 
 0.05	01/03/2005
-	- Data & Layout change on both US site
-	- fixed URL test in UK link tests
-	- changed from @ISA to 'use base'
+	    - Data & Layout change on both US site
+	    - fixed URL test in UK link tests
+	    - changed from @ISA to 'use base'
 
 0.04	07/01/2005
-	- handler() moved to WWW::Scraper::ISBN::Driver
-	- test suite updated to peform skips if can't access web pages
-	- fix for stripbook search keyword
+	    - handler() moved to WWW::Scraper::ISBN::Driver
+	    - test suite updated to peform skips if can't access web pages
+	    - fix for stripbook search keyword
 
 0.03	31/08/2004
-	- Data & Layout change on both US & UK sites
+	    - Data & Layout change on both US & UK sites
 
 0.02	19/04/2004
-	- Test::More added as a prerequisites for PPMs
+	    - Test::More added as a prerequisites for PPMs
 
 0.01	15/04/2004
-	- original version
+	    - original version
