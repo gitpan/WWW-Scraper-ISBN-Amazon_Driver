@@ -1,6 +1,9 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Amazon_Driver.
 
-0.16	29/07/2010
+0.17    30/07/2010
+        - documentation fixes.
+
+0.16    29/07/2010
         - updates to parses for both Amazon US & UK sites.
         - added fields (if known) for binding, pages, weight, width & height.
         - added ean13, which is the industry name for isbn-13.

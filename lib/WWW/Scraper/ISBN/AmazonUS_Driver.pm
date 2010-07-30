@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.16';
+$VERSION = '0.17';
 
 #--------------------------------------------------------------------------
 
@@ -60,7 +60,10 @@ The returned page should be the correct catalog page for that ISBN. If not the
 function returns zero and allows the next driver in the chain to have a go. If
 a valid page is returned, the following fields are returned via the book hash:
 
-  isbn
+  isbn          (now returns isbn13)
+  isbn10        
+  isbn13
+  ean13         (industry name)
   author
   title
   book_link
@@ -68,11 +71,11 @@ a valid page is returned, the following fields are returned via the book hash:
   image_link
   pubdate
   publisher
-  binding   (if known)
-  pages     (if known)
-  weight    (if known) (in grammes)
-  width     (if known) (in millimetres)
-  height    (if known) (in millimetres)
+  binding       (if known)
+  pages         (if known)
+  weight        (if known) (in grammes)
+  width         (if known) (in millimetres)
+  height        (if known) (in millimetres)
 
 The book_link, thumb_link and image_link refer back to the Amazon (US) website.
 
@@ -164,7 +167,8 @@ sub search {
 	return $self->book;
 }
 
-1;
+q{currently reading: Red Rabbit by Tom Clancy};
+
 __END__
 
 =head1 REQUIRES
