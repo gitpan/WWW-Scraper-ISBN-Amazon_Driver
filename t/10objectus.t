@@ -3,91 +3,104 @@ use strict;
 
 use lib './t';
 use Test::More tests => 37;
+use WWW::Scraper::ISBN;
 
 ###########################################################
 
-use WWW::Scraper::ISBN;
+my $CHECK_DOMAIN = 'www.google.com';
+
 my $scraper = WWW::Scraper::ISBN->new();
 isa_ok($scraper,'WWW::Scraper::ISBN');
 
 SKIP: {
-	skip "Can't see a network connection", 36   if(pingtest());
+	skip "Can't see a network connection", 36   if(pingtest($CHECK_DOMAIN));
 
 	$scraper->drivers("AmazonUS");
 
     # search with an ISBN 10 value
 
-	my $isbn = "0201795264";
-	my $record = $scraper->search($isbn);
+	my $isbn    = "0201795264";
+	my $record  = $scraper->search($isbn);
+    my $error   = $record->error || '';
 
-    unless($record->found) {
-		diag($record->error);
-    } else {
-		is($record->found,1);
-		is($record->found_in,'AmazonUS');
+    SKIP: {
+        skip "Website unavailable", 18   if($error =~ /website appears to be unavailable/);
 
-		my $book = $record->book;
-		is($book->{'isbn'},         '0201795264'    ,'.. isbn found');
-		is($book->{'isbn10'},       '0201795264'    ,'.. isbn10 found');
-		is($book->{'isbn13'},       '9780201795264' ,'.. isbn13 found');
-		is($book->{'ean13'},        '9780201795264' ,'.. ean13 found');
-		is($book->{'publisher'},    'Addison-Wesley Professional'   ,'.. publisher found');
-		like($book->{'pubdate'},    qr/2004$/       ,'.. pudate found');     # this date fluctuates throughout Mar/Apr 2004!
-		like($book->{'title'},      qr!Perl Medic!  ,'.. title found');
-		like($book->{'author'},     qr!Peter.*Scott!,'.. author found');
-		like($book->{'image_link'}, qr!^http://www.amazon.com/gp/product/images!);
-		like($book->{'thumb_link'}, qr!http://[-\w]+.images-amazon.com/images/[-\w/.]+\.jpg!);
-		like($book->{'book_link'},  qr!^http://www.amazon.com/(Perl-Medic|.*?field-keywords=(0201795264|9780201795264))!);
-		is($book->{'binding'},      'Paperback'     ,'.. binding found');
-		is($book->{'pages'},        336             ,'.. pages found');
-		is($book->{'width'},        175             ,'.. width found');
-		is($book->{'height'},       228             ,'.. height found');
-		is($book->{'weight'},       undef           ,'.. weight found');
+        unless($record->found) {
+            diag($record->error);
+        } else {
+            is($record->found,1);
+            is($record->found_in,'AmazonUS');
 
-        #use Data::Dumper;
-        #diag("book=[".Dumper($book)."]");
-	}
+            my $book = $record->book;
+            is($book->{'isbn'},         '0201795264'    ,'.. isbn found');
+            is($book->{'isbn10'},       '0201795264'    ,'.. isbn10 found');
+            is($book->{'isbn13'},       '9780201795264' ,'.. isbn13 found');
+            is($book->{'ean13'},        '9780201795264' ,'.. ean13 found');
+            is($book->{'publisher'},    'Addison-Wesley Professional'   ,'.. publisher found');
+            like($book->{'pubdate'},    qr/2004$/       ,'.. pudate found');     # this date fluctuates throughout Mar/Apr 2004!
+            like($book->{'title'},      qr!Perl Medic!  ,'.. title found');
+            like($book->{'author'},     qr!Peter.*Scott!,'.. author found');
+            like($book->{'image_link'}, qr!^http://www.amazon.com/gp/product/images!);
+            like($book->{'thumb_link'}, qr!http://[-\w]+.images-amazon.com/images/[-\w/.]+\.jpg!);
+            like($book->{'book_link'},  qr!^http://www.amazon.com/(Perl-Medic|.*?field-keywords=(0201795264|9780201795264))!);
+            is($book->{'binding'},      'Paperback'     ,'.. binding found');
+            is($book->{'pages'},        336             ,'.. pages found');
+            is($book->{'width'},        175             ,'.. width found');
+            is($book->{'height'},       228             ,'.. height found');
+            is($book->{'weight'},       undef           ,'.. weight found');
+
+            #use Data::Dumper;
+            #diag("book=[".Dumper($book)."]");
+        }
+    }
 
     # search with an ISBN 13 value
 
-	$isbn = "9780672320675";
+	$isbn   = "9780672320675";
 	$record = $scraper->search($isbn);
+    $error  = $record->error || '';
 
-    unless($record->found) {
-		diag($record->error);
-    } else {
-		is($record->found(),1);
-		is($record->found_in(),'AmazonUS');
+    SKIP: {
+        skip "Website unavailable", 18   if($error =~ /website appears to be unavailable/);
 
-		my $book = $record->book;
-		is($book->{'isbn'},         '0672320673'    ,'.. isbn found');
-		is($book->{'isbn10'},       '0672320673'    ,'.. isbn10 found');
-		is($book->{'isbn13'},       '9780672320675' ,'.. isbn13 found');
-		is($book->{'ean13'},        '9780672320675' ,'.. ean13 found');
-		is($book->{'author'},       'Clinton Pierce','.. author found');
-		like($book->{'publisher'},  qr/^Sams/       ,'.. publisher found');  # publisher name changes!
-		like($book->{'pubdate'},    qr/2001$/       ,'.. pudate found');     # this dates fluctuates throughout Jul 2001!
-		like($book->{'title'},      qr!Perl Developer.*?Dictionary! ,'.. title found');
-		like($book->{'image_link'}, qr!^http://www.amazon.com/gp/product/images!);
-		like($book->{'thumb_link'}, qr!http://[-\w]+.images-amazon.com/images/[-\w/.]+\.jpg!);
-		like($book->{'book_link'},  qr!^http://www.amazon.com/(Perl-Developers-Dictionary|.*?field-keywords=(0672320673|9780672320675))!);
-		is($book->{'binding'},      'Paperback'     ,'.. binding found');
-		is($book->{'pages'},        640             ,'.. pages found');
-		is($book->{'width'},        187             ,'.. width found');
-		is($book->{'height'},       231             ,'.. height found');
-		is($book->{'weight'},       undef           ,'.. weight found');
+        unless($record->found) {
+            diag($record->error);
+        } else {
+            is($record->found(),1);
+            is($record->found_in(),'AmazonUS');
 
-        #use Data::Dumper;
-        #diag("book=[".Dumper($book)."]");
-	}
+            my $book = $record->book;
+            is($book->{'isbn'},         '0672320673'    ,'.. isbn found');
+            is($book->{'isbn10'},       '0672320673'    ,'.. isbn10 found');
+            is($book->{'isbn13'},       '9780672320675' ,'.. isbn13 found');
+            is($book->{'ean13'},        '9780672320675' ,'.. ean13 found');
+            is($book->{'author'},       'Clinton Pierce','.. author found');
+            like($book->{'publisher'},  qr/^Sams/       ,'.. publisher found');  # publisher name changes!
+            like($book->{'pubdate'},    qr/2001$/       ,'.. pudate found');     # this dates fluctuates throughout Jul 2001!
+            like($book->{'title'},      qr!Perl Developer.*?Dictionary! ,'.. title found');
+            like($book->{'image_link'}, qr!^http://www.amazon.com/gp/product/images!);
+            like($book->{'thumb_link'}, qr!http://[-\w]+.images-amazon.com/images/[-\w/.]+\.jpg!);
+            like($book->{'book_link'},  qr!^http://www.amazon.com/(Perl-Developers-Dictionary|.*?field-keywords=(0672320673|9780672320675))!);
+            is($book->{'binding'},      'Paperback'     ,'.. binding found');
+            is($book->{'pages'},        640             ,'.. pages found');
+            is($book->{'width'},        187             ,'.. width found');
+            is($book->{'height'},       231             ,'.. height found');
+            is($book->{'weight'},       undef           ,'.. weight found');
+
+            #use Data::Dumper;
+            #diag("book=[".Dumper($book)."]");
+        }
+    }
 }
 
 ###########################################################
 
 # crude, but it'll hopefully do ;)
 sub pingtest {
-  system("ping -q -c 1 www.google.com >/dev/null 2>&1");
-  my $retcode = $? >> 8;
-  # ping returns 1 if unable to connect
-  return $retcode;
+    my $domain = shift or return 0;
+    system("ping -q -c 1 $domain >/dev/null 2>&1");
+    my $retcode = $? >> 8;
+    # ping returns 1 if unable to connect
+    return $retcode;
 }

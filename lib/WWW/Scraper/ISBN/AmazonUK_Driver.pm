@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.17';
+$VERSION = '0.18';
 
 #--------------------------------------------------------------------------
 
@@ -89,26 +89,26 @@ sub search {
 	$self->found(0);
 	$self->book(undef);
 
-	my $mechanize = WWW::Mechanize->new();
-    $mechanize->agent_alias( 'Linux Mozilla' );
+	my $mech = WWW::Mechanize->new();
+    $mech->agent_alias( 'Linux Mozilla' );
 
     my $search = sprintf $AMA_SEARCH, $isbn;
 
-    $mechanize->get( $search );
+	eval { $mech->get( $search ) };
     return $self->handler("Amazon UK website appears to be unavailable.")
-	    unless($mechanize->success());
+	    unless($@ || $mech->success());
 
-	my $content = $mechanize->content();
+	my $content = $mech->content();
     my ($link) = $content =~ m!($AMA_URL)!s;
 	return $self->handler("Failed to find that book on Amazon UK website.")
 	    unless($link);
 
-    $mechanize->get( $link );
-	return $self->handler("Failed to find that book on Amazon UK website.")
-	    unless($mechanize->success());
+	eval { $mech->get( $link ) };
+    return $self->handler("Amazon UK website appears to be unavailable.")
+	    unless($@ || $mech->success());
 
 	# The Book page
-    my $html = $mechanize->content;
+    my $html = $mech->content;
     my $data = {};
 
     #print STDERR "\n#$html";
@@ -150,7 +150,7 @@ sub search {
 		'thumb_link'	=> $data->{thumb_link},
 		'publisher'		=> $data->{publisher},
 		'pubdate'		=> $data->{pubdate},
-		'book_link'		=> $mechanize->uri(),
+		'book_link'		=> $mech->uri(),
 		'content'		=> $data->{content},
 		'binding'	    => $data->{binding},
 		'pages'		    => $data->{pages},
@@ -173,7 +173,6 @@ Requires the following modules be installed:
 
 L<WWW::Scraper::ISBN::Driver>,
 L<WWW::Mechanize>,
-L<Template::Extract>
 
 =head1 SEE ALSO
 
