@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.18';
+$VERSION = '0.19';
 
 #--------------------------------------------------------------------------
 
@@ -96,7 +96,7 @@ sub search {
 
     eval { $mech->get( $search ) };
     return $self->handler("Amazon US website appears to be unavailable.")
-	    unless($@ || $mech->success());
+	    if($@ || !$mech->success() || !$mech->content());
 
 	my $content = $mech->content();
     my ($link) = $content =~ m!($AMA_URL)!s;
@@ -105,7 +105,7 @@ sub search {
 
     eval { $mech->get( $link ) };
     return $self->handler("Amazon US website appears to be unavailable.")
-	    unless($@ || $mech->success());
+	    if($@ || !$mech->success() || !$mech->content());
 
 	# The Book page
     my $html = $mech->content;
@@ -137,11 +137,11 @@ sub search {
     $data->{width}  = int($data->{width} * $IN2MM)  if($data->{width});
     $data->{height} = int($data->{height} * $IN2MM) if($data->{height});
 
-	# trim top and tail
-	foreach (keys %$data) { next unless(defined $data->{$_});$data->{$_} =~ s/^\s+//;$data->{$_} =~ s/\s+$//; }
-
 	return $self->handler("Could not extract data from Amazon US result page.")
 		unless(defined $data->{isbn13});
+
+	# trim top and tail
+	foreach (keys %$data) { next unless(defined $data->{$_});$data->{$_} =~ s/^\s+//;$data->{$_} =~ s/\s+$//; }
 
 	my $bk = {
 		'ean13'		    => $data->{isbn13},

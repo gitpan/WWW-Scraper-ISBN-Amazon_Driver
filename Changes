@@ -1,5 +1,9 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Amazon_Driver.
 
+0.19    10/08/2010
+        - added better protection from network failures.
+        - updated prerequisite requirements.
+
 0.18    02/08/2010
         - added connection protection if client or server offline.
         - documentation updates.

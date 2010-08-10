@@ -5,7 +5,7 @@ WriteMakefile(
     'PREREQ_PM'		=> {
 		WWW::Scraper::ISBN			=> 0.25,
 		WWW::Scraper::ISBN::Driver	=> 0.18,
-		WWW::Mechanize				=> 0,
+		WWW::Mechanize				=> 1.60,
 		Test::More					=> 0.45,	# for testing
 	},
 	NO_META			=> 1,
