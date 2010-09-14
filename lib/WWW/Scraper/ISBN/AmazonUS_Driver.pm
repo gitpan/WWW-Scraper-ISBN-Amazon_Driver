@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.19';
+$VERSION = '0.20';
 
 #--------------------------------------------------------------------------
 
@@ -129,9 +129,9 @@ sub search {
 	($data->{thumb_link},$data->{image_link})  
                                         = $html =~ m!registerImage\("original_image",\s*"([^"]+)",\s*"<a href="\+'"'\+"([^"]+)"\+!;
 
-    ($data->{publisher},$data->{pubdate}) = ($data->{published} =~ /\s*(.*?)(?:;.*?)?\s+\((.*?)\)/);
-    $data->{isbn10} =~ s/[^\dX]+//g;
-    $data->{isbn13} =~ s/\D+//g;
+    ($data->{publisher},$data->{pubdate}) = ($data->{published} =~ /\s*(.*?)(?:;.*?)?\s+\((.*?)\)/) if($data->{published});
+    $data->{isbn10} =~ s/[^\dX]+//g if($data->{isbn10});
+    $data->{isbn13} =~ s/\D+//g     if($data->{isbn13});
 
     $data->{weight} = int($data->{weight} * $OZ2G)  if($data->{weight});
     $data->{width}  = int($data->{width} * $IN2MM)  if($data->{width});
