@@ -1,5 +1,10 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Amazon_Driver.
 
+0.21    15/09/2010
+        - reworked test structure, so easier to add sample sets.
+        - fixed return value of 'isbn' to be 'isbn13'.
+        - added 'description' to the field set returned.
+
 0.20    14/09/2010
         - protect against amending undefined strings.
 

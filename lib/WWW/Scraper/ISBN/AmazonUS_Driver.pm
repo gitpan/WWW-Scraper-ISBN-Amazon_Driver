@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.20';
+$VERSION = '0.21';
 
 #--------------------------------------------------------------------------
 
@@ -111,20 +111,21 @@ sub search {
     my $html = $mech->content;
     my $data = {};
 
-    #print STDERR "\n#$html";
+#print STDERR "\n# html=[$html]\n";
 
     # Note: as the page changes, the older matches are now retained in the
     # event that these are ever reused.
-	($data->{title},$data->{author})    = $html =~ /<meta name="description" content="(?:Amazon.com:)?\s*(.*?).\d+.:\s+([^:]+): Books/;
-	($data->{title},$data->{author})    = $html =~ /<meta name="description" content="(?:Amazon.com: Books: )?\s*(.*?)(?:\s+by|,)\s+(.*)/       unless($data->{author});
-	($data->{title},$data->{author})    = $html =~ /<meta name="description" content="(?:Amazon.com:)?\s*(.*?)(?:\s+by|,|:)\s+([^:]+): Books/   unless($data->{author});
-    ($data->{binding},$data->{pages})   = $html =~ m!<li><b>(Paperback|Hardcover):</b>\s*([\d.]+)\s*pages</li>!s;
-    ($data->{weight})                   = $html =~ m!<li><b>Shipping Weight:</b>\s*([\d.]+)\s*ounces</li>!s;
-    ($data->{height},$data->{width})    = $html =~ m!<li><b>\s*Product Dimensions:\s*</b>\s*([\d.]+) x ([\d.]+) x ([\d.]+) inches\s*</li>!s;
-    ($data->{published})                = $html =~ m!<li><b>Publisher:</b>\s*(.*?)</li>!s;
-    ($data->{isbn10})                   = $html =~ m!<li><b>ISBN-10:</b>\s*(.*?)</li>!s;
-    ($data->{isbn13})                   = $html =~ m!<li><b>ISBN-13:</b>\s*(.*?)</li>!s;
-    ($data->{content})                  = $html =~ m!<meta name="description" content="([^"]+)"!s;
+	($data->{title},$data->{author})    = $html =~ /<meta name="description" content="(?:Amazon.com:)?\s*(.*?).\d+.:\s+([^:]+): Books/si;
+	($data->{title},$data->{author})    = $html =~ /<meta name="description" content="(?:Amazon.com: Books: )?\s*(.*?)(?:\s+by|,)\s+(.*)/si     unless($data->{author});
+	($data->{title},$data->{author})    = $html =~ /<meta name="description" content="(?:Amazon.com:)?\s*(.*?)(?:\s+by|,|:)\s+([^:]+): Books/si unless($data->{author});
+    ($data->{binding},$data->{pages})   = $html =~ m!<li><b>(Paperback|Hardcover):</b>\s*([\d.]+)\s*pages</li>!si;
+    ($data->{weight})                   = $html =~ m!<li><b>Shipping Weight:</b>\s*([\d.]+)\s*ounces</li>!si;
+    ($data->{height},$data->{width})    = $html =~ m!<li><b>\s*Product Dimensions:\s*</b>\s*([\d.]+) x ([\d.]+) x ([\d.]+) inches\s*</li>!si;
+    ($data->{published})                = $html =~ m!<li><b>Publisher:</b>\s*(.*?)</li>!si;
+    ($data->{isbn10})                   = $html =~ m!<li><b>ISBN-10:</b>\s*(.*?)</li>!si;
+    ($data->{isbn13})                   = $html =~ m!<li><b>ISBN-13:</b>\s*(.*?)</li>!si;
+    ($data->{content})                  = $html =~ m!<meta name="description" content="([^"]+)"!si;
+    ($data->{description})              = $html =~ m!<h3 class="productDescriptionSource">Product Description</h3>\s*<div class="productDescriptionWrapper">([^<]+)!si;  
 
 	($data->{thumb_link},$data->{image_link})  
                                         = $html =~ m!registerImage\("original_image",\s*"([^"]+)",\s*"<a href="\+'"'\+"([^"]+)"\+!;
@@ -147,7 +148,7 @@ sub search {
 		'ean13'		    => $data->{isbn13},
 		'isbn13'		=> $data->{isbn13},
 		'isbn10'		=> $data->{isbn10},
-		'isbn'			=> $data->{isbn10},
+		'isbn'			=> $data->{isbn13},
 		'author'		=> $data->{author},
 		'title'			=> $data->{title},
 		'image_link'	=> $data->{image_link},
@@ -160,7 +161,8 @@ sub search {
 		'pages'		    => $data->{pages},
 		'weight'		=> $data->{weight},
 		'width'		    => $data->{width},
-		'height'		=> $data->{height}
+		'height'		=> $data->{height},
+		'description'	=> $data->{description}
 	};
 	$self->book($bk);
 	$self->found(1);
