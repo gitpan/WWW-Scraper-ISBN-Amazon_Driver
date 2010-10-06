@@ -59,7 +59,7 @@ my %tests = (
 );
 
 my $tests = 0;
-for my $isbn (keys %tests) { $tests += scalar( @{ $tests{$isbn} } ) }
+for my $isbn (keys %tests) { $tests += scalar( @{ $tests{$isbn} } ) + 2}
 
 
 ###########################################################
@@ -108,7 +108,11 @@ SKIP: {
 # crude, but it'll hopefully do ;)
 sub pingtest {
     my $domain = shift or return 0;
-    system("ping -q -c 1 $domain >/dev/null 2>&1");
+    my $cmd =   $^O =~ /solaris/i                           ? "ping -s $domain 56 1" :
+                $^O =~ /dos|os2|mswin32|netware|cygwin/i    ? "ping -n 1 $domain "
+                                                            : "ping -c 1 $domain >/dev/null 2>&1";
+
+    system($cmd);
     my $retcode = $? >> 8;
     # ping returns 1 if unable to connect
     return $retcode;

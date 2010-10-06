@@ -1,5 +1,9 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Amazon_Driver.
 
+0.22    06/10/2010
+        - fixed skip count.
+        - provided alternate ping test methods.
+
 0.21    15/09/2010
         - reworked test structure, so easier to add sample sets.
         - fixed return value of 'isbn' to be 'isbn13'.

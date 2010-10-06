@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.21';
+$VERSION = '0.22';
 
 #--------------------------------------------------------------------------
 
@@ -53,8 +53,8 @@ my $OZ2G = 28.3495231;  # number of grams in an ounce (oz)
 
 =item C<search()>
 
-Creates a query string, then passes the appropriate form fields to the Amazon
-(US) server.
+Creates a query string, then passes the appropriate form fields to the 
+Amazon (US) server.
 
 The returned page should be the correct catalog page for that ISBN. If not the
 function returns zero and allows the next driver in the chain to have a go. If
