@@ -1,5 +1,11 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Amazon_Driver.
 
+0.25    22/03/2011
+        - added further skip test if test books are withdrawn from the site.
+        - upgraded to Test::CPAN::Meta::JSON for tests.
+        - Amazon now have a broken ISBN-10 field. ISBN-10 != ISBN-13.
+        - fixed Amazon UK pattern for link from search results page.
+
 0.24    29/10/2010
         - amended skip test counts.
 

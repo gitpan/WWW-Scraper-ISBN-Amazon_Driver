@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.24';
+$VERSION = '0.25';
 
 #--------------------------------------------------------------------------
 
@@ -37,8 +37,8 @@ use WWW::Mechanize;
 ###########################################################################
 # Variables
 
-my $AMA_SEARCH = 'http://www.amazon.co.uk/s/ref=nb_sb_noss?url=search-alias=us-stripbooks-tree&field-keywords=%s';
-my $AMA_URL = 'http://www.amazon.co.uk/[^/]+/dp/[\dX]+/ref=sr_1_1.*?sr=1-1';
+my $AMA_SEARCH = 'http://www.amazon.co.uk/s/ref=nb_sb_noss?url=search-alias%3Daps&x=18&y=16&field-keywords=';
+my $AMA_URL = 'http://www.amazon.co.uk/[^/]+/dp/[\dX]+/ref=sr_1_1/';
 my $IN2MM = 25.4;       # number of inches in a millimetre (mm)
 my $OZ2G = 28.3495231;  # number of grams in an ounce (oz)
 
@@ -92,13 +92,14 @@ sub search {
 	my $mech = WWW::Mechanize->new();
     $mech->agent_alias( 'Linux Mozilla' );
 
-    my $search = sprintf $AMA_SEARCH, $isbn;
+    my $search = $AMA_SEARCH . $isbn;
 
 	eval { $mech->get( $search ) };
     return $self->handler("Amazon UK website appears to be unavailable.")
 	    if($@ || !$mech->success() || !$mech->content());
 
 	my $content = $mech->content();
+#print STDERR "\n# content=[$content]\n";
     my ($link) = $content =~ m!($AMA_URL)!s;
 	return $self->handler("Failed to find that book on Amazon UK website.")
 	    unless($link);
@@ -204,7 +205,7 @@ be forthcoming, please feel free to (politely) remind me.
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2004-2010 Barbie for Miss Barbell Productions
+  Copyright (C) 2004-2011 Barbie for Miss Barbell Productions
 
   This module is free software; you can redistribute it and/or
   modify it under the Artistic Licence v2.

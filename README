@@ -30,11 +30,11 @@ For optional testing the module would like these other modules:
   Test::Pod
   Test::Pod::Coverage
   Test::CPAN::Meta
-  Test::JSON::Meta
+  Test::CPAN::Meta::JSON
 
 COPYRIGHT AND LICENSE
 
-  Copyright (C) 2004-2010 Barbie for Miss Barbell Productions
+  Copyright (C) 2004-2011 Barbie for Miss Barbell Productions
 
   This module is free software; you can redistribute it and/or
   modify it under the Artistic Licence v2.
