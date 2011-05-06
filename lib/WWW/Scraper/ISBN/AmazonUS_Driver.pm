@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.25';
+$VERSION = '0.26';
 
 #--------------------------------------------------------------------------
 
@@ -125,7 +125,8 @@ sub search {
     ($data->{isbn10})                   = $html =~ m!<li><b>ISBN-10:</b>\s*(.*?)</li>!si;
     ($data->{isbn13})                   = $html =~ m!<li><b>ISBN-13:</b>\s*(.*?)</li>!si;
     ($data->{content})                  = $html =~ m!<meta name="description" content="([^"]+)"!si;
-    ($data->{description})              = $html =~ m!<h3 class="productDescriptionSource">Product Description</h3>\s*<div class="productDescriptionWrapper">([^<]+)!si;  
+    ($data->{description})              = $html =~ m!<h3 class="productDescriptionSource">Product Description</h3>\s*<div class="productDescriptionWrapper">\s*<p>([^<]+)!si;  
+    ($data->{description})              = $html =~ m!<h3 class="productDescriptionSource">Product Description</h3>\s*<div class="productDescriptionWrapper">\s*([^<]+)!si       unless($data->{description});  
 
 	($data->{thumb_link},$data->{image_link})  
                                         = $html =~ m!registerImage\("original_image",\s*"([^"]+)",\s*"<a href="\+'"'\+"([^"]+)"\+!;

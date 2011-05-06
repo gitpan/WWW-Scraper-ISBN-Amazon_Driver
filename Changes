@@ -1,5 +1,8 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Amazon_Driver.
 
+0.26    06/05/2011
+        - fix to description pattern match.
+
 0.25    22/03/2011
         - added further skip test if test books are withdrawn from the site.
         - upgraded to Test::CPAN::Meta::JSON for tests.
