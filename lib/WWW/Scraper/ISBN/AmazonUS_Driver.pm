@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.26';
+$VERSION = '0.27';
 
 #--------------------------------------------------------------------------
 
@@ -115,7 +115,8 @@ sub search {
 
     # Note: as the page changes, the older matches are now retained in the
     # event that these are ever reused.
-	($data->{title},$data->{author})    = $html =~ /<meta name="description" content="(?:Amazon.com:)?\s*(.*?).\d+.:\s+([^:]+): Books/si;
+    ($data->{title},$data->{author})    = $html =~ /<meta name="description" content="(.*?): (.*?): (\d+): Amazon.com: Books/si;
+	($data->{title},$data->{author})    = $html =~ /<meta name="description" content="(?:Amazon.com:)?\s*(.*?).\d+.:\s+([^:]+): Books/si        unless($data->{author});
 	($data->{title},$data->{author})    = $html =~ /<meta name="description" content="(?:Amazon.com: Books: )?\s*(.*?)(?:\s+by|,)\s+(.*)/si     unless($data->{author});
 	($data->{title},$data->{author})    = $html =~ /<meta name="description" content="(?:Amazon.com:)?\s*(.*?)(?:\s+by|,|:)\s+([^:]+): Books/si unless($data->{author});
     ($data->{binding},$data->{pages})   = $html =~ m!<li><b>(Paperback|Hardcover):</b>\s*([\d.]+)\s*pages</li>!si;
@@ -125,8 +126,10 @@ sub search {
     ($data->{isbn10})                   = $html =~ m!<li><b>ISBN-10:</b>\s*(.*?)</li>!si;
     ($data->{isbn13})                   = $html =~ m!<li><b>ISBN-13:</b>\s*(.*?)</li>!si;
     ($data->{content})                  = $html =~ m!<meta name="description" content="([^"]+)"!si;
-    ($data->{description})              = $html =~ m!<h3 class="productDescriptionSource">Product Description</h3>\s*<div class="productDescriptionWrapper">\s*<p>([^<]+)!si;  
-    ($data->{description})              = $html =~ m!<h3 class="productDescriptionSource">Product Description</h3>\s*<div class="productDescriptionWrapper">\s*([^<]+)!si       unless($data->{description});  
+    ($data->{description})              = $html =~ m!<h2>Book Description</h2>.*?<div id="postBodyPS"[^>]+>\s*<div[^>]*>\s*<p>\s*(.*?)\s*</p>\s*</div!si;
+    ($data->{description})              = $html =~ m!<h2>Book Description</h2>.*?<div id="postBodyPS"[^>]+>\s*<div[^>]*>\s*(.*?)\s*</div!si                                                             unless($data->{description});  
+    ($data->{description})              = $html =~ m!<h3 class="productDescriptionSource">(?:Product Description|From the Back Cover)</h3>\s*<div class="productDescriptionWrapper">\s*<p>([^<]+)!si    unless($data->{description});  
+    ($data->{description})              = $html =~ m!<h3 class="productDescriptionSource">(?:Product Description|From the Back Cover)</h3>\s*<div class="productDescriptionWrapper">\s*(.*?)<div!si     unless($data->{description});  
 
 	($data->{thumb_link},$data->{image_link})  
                                         = $html =~ m!registerImage\("original_image",\s*"([^"]+)",\s*"<a href="\+'"'\+"([^"]+)"\+!;
@@ -136,7 +139,7 @@ sub search {
     $data->{isbn13} =~ s/\D+//g     if($data->{isbn13});
 
     $data->{weight} = int($data->{weight} * $OZ2G)  if($data->{weight});
-    $data->{width}  = int($data->{width} * $IN2MM)  if($data->{width});
+    $data->{width}  = int($data->{width}  * $IN2MM) if($data->{width});
     $data->{height} = int($data->{height} * $IN2MM) if($data->{height});
 
 	return $self->handler("Could not extract data from Amazon US result page.")
@@ -196,7 +199,7 @@ RT system (http://rt.cpan.org/Public/Dist/Display.html?Name=WWW-Scraper-ISBN-Ama
 However, it would help greatly if you are able to pinpoint problems or even
 supply a patch.
 
-Fixes are dependant upon their severity and my availablity. Should a fix not
+Fixes are dependent upon their severity and my availability. Should a fix not
 be forthcoming, please feel free to (politely) remind me.
 
 =head1 AUTHOR
@@ -206,7 +209,7 @@ be forthcoming, please feel free to (politely) remind me.
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2004-2011 Barbie for Miss Barbell Productions
+  Copyright (C) 2004-2012 Barbie for Miss Barbell Productions
 
   This module is free software; you can redistribute it and/or
   modify it under the Artistic Licence v2.

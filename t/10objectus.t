@@ -22,8 +22,8 @@ my %tests = (
         [ 'like',   'pubdate',      qr/2004$/       ],  # this date fluctuates throughout Mar/Apr 2004!
         [ 'is',     'binding',      'Paperback'     ],
         [ 'is',     'pages',        336             ],
-        [ 'is',     'width',        175             ],
-        [ 'is',     'height',       228             ],
+        [ 'is',     'width',        177             ],
+        [ 'is',     'height',       233             ],
         [ 'is',     'weight',       undef           ],
         [ 'like',   'image_link',   qr!^http://www.amazon.com/gp/product/images! ],
         [ 'like',   'thumb_link',   qr!http://[-\w]+.images-amazon.com/images/[-\w/.]+\.jpg! ],

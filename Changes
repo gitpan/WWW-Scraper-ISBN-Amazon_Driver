@@ -1,5 +1,12 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Amazon_Driver.
 
+0.27    13/05/2012
+	- additonal regexes for variations of the data returned by Amazon.com.
+	- spelling fixes. (thanks to Florian Schlichting & Gregor Herrmann).
+	- META tests no longer require specific versions.
+	- added minimum perl version (5.006).
+        - reworked Makefile.PL for clarity.
+
 0.26    06/05/2011
         - fix to description pattern match.
 

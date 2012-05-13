@@ -1,6 +1,6 @@
 {
     "name": "WWW-Scraper-ISBN-Amazon_Driver",
-    "version": "0.26",
+    "version": "0.27",
     "abstract": "Search drivers for the Amazon online catalog.",
     "author": ["Barbie <barbie@cpan.org>"],
 
@@ -21,6 +21,7 @@
     "prereqs" : {
         "runtime" : {
             "requires" : {
+                "perl": "5.006",
                 "WWW::Mechanize": "1.60",
                 "WWW::Scraper::ISBN": "0.25",
                 "WWW::Scraper::ISBN::Driver": "0.18"
@@ -28,14 +29,14 @@
         },
         "test" : {
             "requires": {
-                "Test::More": "0.45"
+                "IO::File": "0",
+                "Test::More": "0.70"
             },
             "recommends": {
-                "Test::More": "0.70",
                 "Test::Pod": "1.00",
                 "Test::Pod::Coverage": "0.08",
-                "Test::CPAN::Meta": "0.13",
-                "Test::CPAN::Meta::JSON": "0.10"
+                "Test::CPAN::Meta": "0",
+                "Test::CPAN::Meta::JSON": "0"
             }
         }
     },
@@ -43,11 +44,11 @@
     "provides": {
         "WWW::Scraper::ISBN::AmazonUK_Driver": {
             "file": "lib/WWW/Scraper/ISBN/AmazonUK_Driver.pm",
-            "version": "0.26"
+            "version": "0.27"
         },
         "WWW::Scraper::ISBN::AmazonUS_Driver": {
             "file": "lib/WWW/Scraper/ISBN/AmazonUS_Driver.pm",
-            "version": "0.26"
+            "version": "0.27"
         }
     },
     "no_index": {
