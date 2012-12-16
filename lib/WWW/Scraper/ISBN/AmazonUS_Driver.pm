@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.27';
+$VERSION = '0.28';
 
 #--------------------------------------------------------------------------
 
@@ -38,9 +38,10 @@ use WWW::Mechanize;
 # Variables
 
 my $AMA_SEARCH = 'http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias=us-stripbooks-tree&field-keywords=%s';
-my $AMA_URL = 'http://www.amazon.com/[^/]+/dp/[\dX]+/ref=sr_1_1.*?sr=1-1';
+my $AMA_URL    = 'http://www.amazon.com/[^/]+/dp/[\dX]+/ref=sr_1_1.*?sr=1-1';
 my $IN2MM = 25.4;       # number of inches in a millimetre (mm)
-my $OZ2G = 28.3495231;  # number of grams in an ounce (oz)
+my $OZ2G  = 28.3495231; # number of grams in an ounce (oz)
+my $LBS2G = 0.00220462; # number of grams in a pound (lbs)
 
 #--------------------------------------------------------------------------
 
@@ -75,6 +76,7 @@ a valid page is returned, the following fields are returned via the book hash:
   pages         (if known)
   weight        (if known) (in grammes)
   width         (if known) (in millimetres)
+  depth         (if known) (in millimetres)
   height        (if known) (in millimetres)
 
 The book_link, thumb_link and image_link refer back to the Amazon (US) website.
@@ -120,8 +122,6 @@ sub search {
 	($data->{title},$data->{author})    = $html =~ /<meta name="description" content="(?:Amazon.com: Books: )?\s*(.*?)(?:\s+by|,)\s+(.*)/si     unless($data->{author});
 	($data->{title},$data->{author})    = $html =~ /<meta name="description" content="(?:Amazon.com:)?\s*(.*?)(?:\s+by|,|:)\s+([^:]+): Books/si unless($data->{author});
     ($data->{binding},$data->{pages})   = $html =~ m!<li><b>(Paperback|Hardcover):</b>\s*([\d.]+)\s*pages</li>!si;
-    ($data->{weight})                   = $html =~ m!<li><b>Shipping Weight:</b>\s*([\d.]+)\s*ounces</li>!si;
-    ($data->{height},$data->{width})    = $html =~ m!<li><b>\s*Product Dimensions:\s*</b>\s*([\d.]+) x ([\d.]+) x ([\d.]+) inches\s*</li>!si;
     ($data->{published})                = $html =~ m!<li><b>Publisher:</b>\s*(.*?)</li>!si;
     ($data->{isbn10})                   = $html =~ m!<li><b>ISBN-10:</b>\s*(.*?)</li>!si;
     ($data->{isbn13})                   = $html =~ m!<li><b>ISBN-13:</b>\s*(.*?)</li>!si;
@@ -131,6 +131,21 @@ sub search {
     ($data->{description})              = $html =~ m!<h3 class="productDescriptionSource">(?:Product Description|From the Back Cover)</h3>\s*<div class="productDescriptionWrapper">\s*<p>([^<]+)!si    unless($data->{description});  
     ($data->{description})              = $html =~ m!<h3 class="productDescriptionSource">(?:Product Description|From the Back Cover)</h3>\s*<div class="productDescriptionWrapper">\s*(.*?)<div!si     unless($data->{description});  
 
+    # amazon both ounces and pounds
+    ($data->{weight})                   = $html =~ m!<li><b>Shipping Weight:</b>\s*([\d.]+)\s*ounces</li>!si;
+    if($data->{weight}) {
+        $data->{weight} = int($data->{weight} * $OZ2G);
+    } else {
+        ($data->{weight})               = $html =~ m!<li><b>Shipping Weight:</b>\s*([\d.]+)\s*pounds</li>!si;
+        $data->{weight} = int($data->{weight} * $LBS2G)  if($data->{weight});
+    }
+
+    # amazon change this regularly
+    ($data->{width},$data->{depth},$data->{height}) = $html =~ m!<li><b>\s*Product Dimensions:\s*</b>\s*([\d.]+) x ([\d.]+) x ([\d.]+) inches\s*</li>!si;
+    $data->{width}  = int($data->{width}  * $IN2MM) if($data->{width});
+    $data->{depth}  = int($data->{depth}  * $IN2MM) if($data->{depth});
+    $data->{height} = int($data->{height} * $IN2MM) if($data->{height});
+
 	($data->{thumb_link},$data->{image_link})  
                                         = $html =~ m!registerImage\("original_image",\s*"([^"]+)",\s*"<a href="\+'"'\+"([^"]+)"\+!;
 
@@ -138,9 +153,6 @@ sub search {
     $data->{isbn10} =~ s/[^\dX]+//g if($data->{isbn10});
     $data->{isbn13} =~ s/\D+//g     if($data->{isbn13});
 
-    $data->{weight} = int($data->{weight} * $OZ2G)  if($data->{weight});
-    $data->{width}  = int($data->{width}  * $IN2MM) if($data->{width});
-    $data->{height} = int($data->{height} * $IN2MM) if($data->{height});
 
 	return $self->handler("Could not extract data from Amazon US result page.")
 		unless(defined $data->{isbn13});

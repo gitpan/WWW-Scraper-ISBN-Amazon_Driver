@@ -1,7 +1,6 @@
 #!/usr/bin/perl -w
 use strict;
 
-use lib './t';
 use Test::More tests => 45;
 use WWW::Scraper::ISBN;
 
