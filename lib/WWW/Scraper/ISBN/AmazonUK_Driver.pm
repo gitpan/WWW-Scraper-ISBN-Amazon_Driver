@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.28';
+$VERSION = '0.29';
 
 #--------------------------------------------------------------------------
 
@@ -39,8 +39,9 @@ use WWW::Mechanize;
 
 my $AMA_SEARCH = 'http://www.amazon.co.uk/s/ref=nb_sb_noss?url=search-alias%3Daps&x=18&y=16&field-keywords=';
 my $AMA_URL = 'http://www.amazon.co.uk/[^/]+/dp/[\dX]+/ref=sr_1_1/';
-my $IN2MM = 25.4;       # number of inches in a millimetre (mm)
-my $OZ2G = 28.3495231;  # number of grams in an ounce (oz)
+my $IN2MM = 0.0393700787;   # number of inches in a millimetre (mm)
+my $LB2G  = 0.00220462;     # number of pounds (lbs) in a gram
+my $OZ2G  = 0.035274;       # number of ounces (oz) in a gram
 
 #--------------------------------------------------------------------------
 
@@ -73,9 +74,10 @@ a valid page is returned, the following fields are returned via the book hash:
   publisher
   binding       (if known)
   pages         (if known)
-  weight        (if known) (in grammes)
+  weight        (if known) (in grams)
   width         (if known) (in millimetres)
   height        (if known) (in millimetres)
+  depth         (if known) (in millimetres)
 
 The book_link, thumb_link and image_link refer back to the Amazon (UK) website.
 
@@ -114,21 +116,21 @@ sub search {
 
 #print STDERR "\n# html=[$html]\n";
 
+    ($data->{height},$data->{width},$data->{depth})    
+                                        = $html =~ m!<li><b>\s*Product Dimensions:\s*</b>\s*([\d.]+) x ([\d.]+) x ([\d.]+) cm\s*</li>!si;
     ($data->{binding},$data->{pages})   = $html =~ m!<li><b>(Paperback|Hardcover):</b>\s*([\d.]+)\s*pages</li>!si;
     ($data->{weight})                   = $html =~ m!<li><b>Shipping Weight:</b>\s*([\d.]+)\s*ounces</li>!si;
-    ($data->{height},$data->{width})    = $html =~ m!<li><b>\s*Product Dimensions:\s*</b>\s*([\d.]+) x ([\d.]+) x ([\d.]+) cm\s*</li>!si;
     ($data->{published})                = $html =~ m!<li><b>Publisher:</b>\s*(.*?)</li>!si;
     ($data->{isbn10})                   = $html =~ m!<li><b>ISBN-10:</b>\s*(.*?)</li>!si;
     ($data->{isbn13})                   = $html =~ m!<li><b>ISBN-13:</b>\s*(.*?)</li>!si;
     ($data->{content})                  = $html =~ m!<meta name="description" content="([^"]+)"!si;
     ($data->{description})              = $html =~ m!<h3 class="productDescriptionSource">Product Description</h3>\s*<div class="productDescriptionWrapper">\s*<P>([^<]+)!si;  
+	($data->{thumb_link},$data->{image_link})  
+                                        = $html =~ m!registerImage\("original_image",\s*"([^"]+)",\s*"<a href="\+'"'\+"([^"]+)"\+!;
 
     $data->{content} =~ s/Amazon\.co\.uk.*?://i;
     $data->{content} =~ s/: Books.*//i;
-	($data->{title},$data->{author}) = ($data->{content} =~ /\s*(.*?)(?:\s+by|,|:)\s+([^:]+)\s*$/)  unless($data->{author});
-
-	($data->{thumb_link},$data->{image_link})  
-                                        = $html =~ m!registerImage\("original_image",\s*"([^"]+)",\s*"<a href="\+'"'\+"([^"]+)"\+!;
+	($data->{title},$data->{author}) = ($data->{content} =~ /\s*(.*?)(?:\s+by|,|:)\s+([^:]+)\s*$/);
 
     ($data->{publisher},$data->{pubdate}) = ($data->{published} =~ /\s*(.*?)(?:;.*?)?\s+\((.*?)\)/) if($data->{published});
     $data->{isbn10}  =~ s/[^\dX]+//g    if($data->{isbn10});
@@ -162,7 +164,9 @@ sub search {
 		'weight'		=> $data->{weight},
 		'width'		    => $data->{width},
 		'height'		=> $data->{height},
-		'description'	=> $data->{description}
+        'depth'         => $data->{depth},
+		'description'	=> $data->{description},
+        'html'          => $html
 	};
 	$self->book($bk);
 	$self->found(1);
@@ -205,9 +209,9 @@ be forthcoming, please feel free to (politely) remind me.
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2004-2012 Barbie for Miss Barbell Productions
+  Copyright (C) 2004-2013 Barbie for Miss Barbell Productions
 
-  This module is free software; you can redistribute it and/or
+  This distribution is free software; you can redistribute it and/or
   modify it under the Artistic Licence v2.
 
 =cut

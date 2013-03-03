@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.28';
+$VERSION = '0.29';
 
 #--------------------------------------------------------------------------
 
@@ -39,9 +39,9 @@ use WWW::Mechanize;
 
 my $AMA_SEARCH = 'http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias=us-stripbooks-tree&field-keywords=%s';
 my $AMA_URL    = 'http://www.amazon.com/[^/]+/dp/[\dX]+/ref=sr_1_1.*?sr=1-1';
-my $IN2MM = 25.4;       # number of inches in a millimetre (mm)
-my $OZ2G  = 28.3495231; # number of grams in an ounce (oz)
-my $LBS2G = 0.00220462; # number of grams in a pound (lbs)
+my $IN2MM = 0.0393700787;   # number of inches in a millimetre (mm)
+my $LB2G  = 0.00220462;     # number of pounds (lbs) in a gram
+my $OZ2G  = 0.035274;       # number of ounces (oz) in a gram
 
 #--------------------------------------------------------------------------
 
@@ -74,10 +74,10 @@ a valid page is returned, the following fields are returned via the book hash:
   publisher
   binding       (if known)
   pages         (if known)
-  weight        (if known) (in grammes)
+  weight        (if known) (in grams)
   width         (if known) (in millimetres)
-  depth         (if known) (in millimetres)
   height        (if known) (in millimetres)
+  depth         (if known) (in millimetres)
 
 The book_link, thumb_link and image_link refer back to the Amazon (US) website.
 
@@ -86,41 +86,59 @@ The book_link, thumb_link and image_link refer back to the Amazon (US) website.
 =cut
 
 sub search {
-	my $self = shift;
-	my $isbn = shift;
-	$self->found(0);
-	$self->book(undef);
+    my $self = shift;
+    my $isbn = shift;
+    $self->found(0);
+    $self->book(undef);
 
-	my $mech = WWW::Mechanize->new();
+    my $mech = WWW::Mechanize->new();
     $mech->agent_alias( 'Linux Mozilla' );
 
     my $search = sprintf $AMA_SEARCH, $isbn;
 
     eval { $mech->get( $search ) };
     return $self->handler("Amazon US website appears to be unavailable.")
-	    if($@ || !$mech->success() || !$mech->content());
+        if($@ || !$mech->success() || !$mech->content());
 
-	my $content = $mech->content();
+    my $content = $mech->content();
     my ($link) = $content =~ m!($AMA_URL)!s;
-	return $self->handler("Failed to find that book on Amazon US website.")
-	    unless($link);
+    return $self->handler("Failed to find that book on Amazon US website.")
+        unless($link);
 
     eval { $mech->get( $link ) };
     return $self->handler("Amazon US website appears to be unavailable.")
-	    if($@ || !$mech->success() || !$mech->content());
+        if($@ || !$mech->success() || !$mech->content());
 
-	# The Book page
+    # The Book page
     my $html = $mech->content;
     my $data = {};
 
 #print STDERR "\n# html=[$html]\n";
 
+    $data->{title} = $1                                                     
+        if    ( $html =~ m{<h2   \s+ class="quorus-product-name" \s* > \s*     (.+?) (?= </h2>)    }six && $1 )                                               
+           || ( $html =~ m{<span \s+    id="btAsinTitle"         \s* > \s*     (.+?) (?= </?span>) }six && $1 )                                               
+           || ( $html =~ m{<td   \s+    id="prodImageCell" .+?                 alt="([^"]+)"}six && $1 )
+    ;    
+    
     # Note: as the page changes, the older matches are now retained in the
     # event that these are ever reused.
-    ($data->{title},$data->{author})    = $html =~ /<meta name="description" content="(.*?): (.*?): (\d+): Amazon.com: Books/si;
-	($data->{title},$data->{author})    = $html =~ /<meta name="description" content="(?:Amazon.com:)?\s*(.*?).\d+.:\s+([^:]+): Books/si        unless($data->{author});
-	($data->{title},$data->{author})    = $html =~ /<meta name="description" content="(?:Amazon.com: Books: )?\s*(.*?)(?:\s+by|,)\s+(.*)/si     unless($data->{author});
-	($data->{title},$data->{author})    = $html =~ /<meta name="description" content="(?:Amazon.com:)?\s*(.*?)(?:\s+by|,|:)\s+([^:]+): Books/si unless($data->{author});
+
+    my @patterns = (
+        qr/<meta name="description" content="(.*?): (.*?): (\d+): Amazon.com: Books/si,
+        qr/<meta name="description" content="(?:Amazon.com:)?\s*(.*?).\d+.:\s+([^:]+): Books/si,
+        qr/<meta name="description" content="(?:Amazon.com: Books: )?\s*(.*?)(?:\s+by|,)\s+(.*)/si,
+        qr/<meta name="description" content="(?:Amazon.com:)?\s*(.*?)(?:\s+by|,|:)\s+([^:]+): Books/si
+    );
+
+    for my $pattern (@patterns) {
+        my ($title,$author) = $html =~ $pattern;
+        $data->{title}  ||= $title;
+        $data->{author} ||= $author;
+
+        last    if($data->{title} && $data->{author});
+    }
+
     ($data->{binding},$data->{pages})   = $html =~ m!<li><b>(Paperback|Hardcover):</b>\s*([\d.]+)\s*pages</li>!si;
     ($data->{published})                = $html =~ m!<li><b>Publisher:</b>\s*(.*?)</li>!si;
     ($data->{isbn10})                   = $html =~ m!<li><b>ISBN-10:</b>\s*(.*?)</li>!si;
@@ -131,58 +149,58 @@ sub search {
     ($data->{description})              = $html =~ m!<h3 class="productDescriptionSource">(?:Product Description|From the Back Cover)</h3>\s*<div class="productDescriptionWrapper">\s*<p>([^<]+)!si    unless($data->{description});  
     ($data->{description})              = $html =~ m!<h3 class="productDescriptionSource">(?:Product Description|From the Back Cover)</h3>\s*<div class="productDescriptionWrapper">\s*(.*?)<div!si     unless($data->{description});  
 
-    # amazon both ounces and pounds
-    ($data->{weight})                   = $html =~ m!<li><b>Shipping Weight:</b>\s*([\d.]+)\s*ounces</li>!si;
-    if($data->{weight}) {
-        $data->{weight} = int($data->{weight} * $OZ2G);
-    } else {
-        ($data->{weight})               = $html =~ m!<li><b>Shipping Weight:</b>\s*([\d.]+)\s*pounds</li>!si;
-        $data->{weight} = int($data->{weight} * $LBS2G)  if($data->{weight});
-    }
+    # amazon use both ounces and pounds
+    my $weight;
+    ($data->{weight},$weight)                   = $html =~ m!<li><b>Shipping Weight:</b>\s*([\d.]+)\s*(ounces|pounds)!si;
+    $data->{weight} = int($data->{weight} / $OZ2G)  if($data->{weight} && $weight eq 'ounces');
+    $data->{weight} = int($data->{weight} / $LB2G)  if($data->{weight} && $weight eq 'pounds');
 
     # amazon change this regularly
     ($data->{width},$data->{depth},$data->{height}) = $html =~ m!<li><b>\s*Product Dimensions:\s*</b>\s*([\d.]+) x ([\d.]+) x ([\d.]+) inches\s*</li>!si;
-    $data->{width}  = int($data->{width}  * $IN2MM) if($data->{width});
-    $data->{depth}  = int($data->{depth}  * $IN2MM) if($data->{depth});
-    $data->{height} = int($data->{height} * $IN2MM) if($data->{height});
+    $data->{width}  = int($data->{width}  / $IN2MM) if($data->{width});
+    $data->{depth}  = int($data->{depth}  / $IN2MM) if($data->{depth});
+    $data->{height} = int($data->{height} / $IN2MM) if($data->{height});
 
-	($data->{thumb_link},$data->{image_link})  
-                                        = $html =~ m!registerImage\("original_image",\s*"([^"]+)",\s*"<a href="\+'"'\+"([^"]+)"\+!;
+    ($data->{thumb_link},$data->{image_link}) = $html =~ m!registerImage\("original_image",\s*"([^"]+)",\s*"<a href="\+'"'\+"([^"]+)"\+!si;
+    ($data->{image_link},$data->{thumb_link}) = $html =~ m!<script type="text/javascript">\s*var colorImages = \{"initial":\[\{(?:"large":"[^"]+",)?"landing":\["([^"]+)"\],"thumb":"([^"]+)"!si
+        unless(($data->{image_link} && $data->{thumb_link}));
 
     ($data->{publisher},$data->{pubdate}) = ($data->{published} =~ /\s*(.*?)(?:;.*?)?\s+\((.*?)\)/) if($data->{published});
     $data->{isbn10} =~ s/[^\dX]+//g if($data->{isbn10});
     $data->{isbn13} =~ s/\D+//g     if($data->{isbn13});
 
 
-	return $self->handler("Could not extract data from Amazon US result page.")
-		unless(defined $data->{isbn13});
+    return $self->handler("Could not extract data from Amazon US result page.")
+        unless(defined $data->{isbn13});
 
-	# trim top and tail
-	foreach (keys %$data) { next unless(defined $data->{$_});$data->{$_} =~ s/^\s+//;$data->{$_} =~ s/\s+$//; }
+    # trim top and tail
+    foreach (keys %$data) { next unless(defined $data->{$_});$data->{$_} =~ s/^\s+//;$data->{$_} =~ s/\s+$//; }
 
-	my $bk = {
-		'ean13'		    => $data->{isbn13},
-		'isbn13'		=> $data->{isbn13},
-		'isbn10'		=> $data->{isbn10},
-		'isbn'			=> $data->{isbn13},
-		'author'		=> $data->{author},
-		'title'			=> $data->{title},
-		'image_link'	=> $data->{image_link},
-		'thumb_link'	=> $data->{thumb_link},
-		'publisher'		=> $data->{publisher},
-		'pubdate'		=> $data->{pubdate},
-		'book_link'		=> $mech->uri(),
-		'content'		=> $data->{content},
-		'binding'	    => $data->{binding},
-		'pages'		    => $data->{pages},
-		'weight'		=> $data->{weight},
-		'width'		    => $data->{width},
-		'height'		=> $data->{height},
-		'description'	=> $data->{description}
-	};
-	$self->book($bk);
-	$self->found(1);
-	return $self->book;
+    my $bk = {
+        'ean13'         => $data->{isbn13},
+        'isbn13'        => $data->{isbn13},
+        'isbn10'        => $data->{isbn10},
+        'isbn'          => $data->{isbn13},
+        'author'        => $data->{author},
+        'title'         => $data->{title},
+        'image_link'    => $data->{image_link},
+        'thumb_link'    => $data->{thumb_link},
+        'publisher'     => $data->{publisher},
+        'pubdate'       => $data->{pubdate},
+        'book_link'     => $mech->uri(),
+        'content'       => $data->{content},
+        'binding'       => $data->{binding},
+        'pages'         => $data->{pages},
+        'weight'        => $data->{weight},
+        'width'         => $data->{width},
+        'height'        => $data->{height},
+        'depth'         => $data->{depth},
+        'description'   => $data->{description},
+        'html'          => $html
+    };
+    $self->book($bk);
+    $self->found(1);
+    return $self->book;
 }
 
 q{currently reading: Red Rabbit by Tom Clancy};
@@ -221,9 +239,9 @@ be forthcoming, please feel free to (politely) remind me.
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2004-2012 Barbie for Miss Barbell Productions
+  Copyright (C) 2004-2013 Barbie for Miss Barbell Productions
 
-  This module is free software; you can redistribute it and/or
+  This distribution is free software; you can redistribute it and/or
   modify it under the Artistic Licence v2.
 
 =cut

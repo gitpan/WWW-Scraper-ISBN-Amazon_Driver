@@ -1,5 +1,11 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Amazon_Driver.
 
+0.29    2013-03-03
+        - alternative regexes for AmazonUS titles (thanks to Franck Porcher).
+        - fixed weight calculations.
+        - fixed image pattern matches.
+        - expose depth values.
+
 0.28    2012-12-16
         - weight extract also accounts for pounds (lbs)
         - depth extract added

@@ -1,8 +1,9 @@
 #!/usr/bin/perl -w
 use strict;
 
-use Test::More tests => 45;
+use Test::More tests => 41;
 use WWW::Scraper::ISBN;
+use Data::Dumper;
 
 ###########################################################
 
@@ -11,49 +12,44 @@ my $CHECK_DOMAIN    = 'www.google.com';
 
 my %tests = (
     '0201795264' => [
-        [ 'is',     'isbn',         '9780201795264' ],
-        [ 'like',   'isbn10',       qr!020179526!   ],  # Amazon have a broken ISBN-10 field!
-        [ 'is',     'isbn13',       '9780201795264' ],
-        [ 'is',     'ean13',        '9780201795264' ],
-        [ 'like',   'title',        qr!Perl Medic!  ],
-        [ 'like',   'author',       qr!Peter.*Scott!],
+        [ 'is',     'isbn',         '9780201795264'                 ],
+        [ 'like',   'isbn10',       qr!020179526!                   ],  # Amazon have a broken ISBN-10 field!
+        [ 'is',     'isbn13',       '9780201795264'                 ],
+        [ 'is',     'ean13',        '9780201795264'                 ],
+        [ 'like',   'title',        qr!Perl Medic!                  ],
+        [ 'like',   'author',       qr!Peter.*Scott!                ],
         [ 'is',     'publisher',    'Addison-Wesley Professional'   ],
-        [ 'like',   'pubdate',      qr/2004$/       ],  # this date fluctuates throughout Mar/Apr 2004!
-        [ 'is',     'binding',      'Paperback'     ],
-        [ 'is',     'pages',        336             ],
-        [ 'is',     'width',        177             ],
-        [ 'is',     'height',       233             ],
-        [ 'is',     'weight',       undef           ],
-        [ 'like',   'image_link',   qr!^http://www.amazon.com/gp/product/images! ],
-        [ 'like',   'thumb_link',   qr!http://[-\w]+.images-amazon.com/images/[-\w/.]+\.jpg! ],
+        [ 'like',   'pubdate',      qr/2004$/                       ],  # this date fluctuates throughout Mar/Apr 2004!
+        [ 'is',     'binding',      'Paperback'                     ],
+        [ 'is',     'pages',        336                             ],
+        [ 'is',     'width',        177                             ],
+        [ 'is',     'height',       233                             ],
+        [ 'is',     'depth',        20                              ],
+        [ 'is',     'weight',       544                             ],
+        [ 'like',   'image_link',   qr!^http://(www\.|[-\w]+\.images-)amazon\.com/(gp/product/images|images/[-\w/.,]+\.jpg)! ],
+        [ 'like',   'thumb_link',   qr!^http://(www\.|[-\w]+\.images-)amazon\.com/(gp/product/images|images/[-\w/.,]+\.jpg)! ],
         [ 'like',   'description',  qr|This book is about taking over Perl code| ],
         [ 'like',   'book_link',    qr!^http://www.amazon.com/(Perl-Medic|.*?field-keywords=(0201795264|9780201795264))! ]
     ],
     '9780672320675' => [
-        [ 'is',     'isbn',         '9780672320675'             ],
-        [ 'like',   'isbn10',       qr!067232067!               ],  # Amazon have a broken ISBN-10 field!
-        [ 'is',     'isbn13',       '9780672320675'             ],
-        [ 'is',     'ean13',        '9780672320675'             ],
-        [ 'is',     'author',       'Clinton Pierce'            ],
+        [ 'is',     'isbn',         '9780672320675'                 ],
+        [ 'like',   'isbn10',       qr!067232067!                   ],  # Amazon have a broken ISBN-10 field!
+        [ 'is',     'isbn13',       '9780672320675'                 ],
+        [ 'is',     'ean13',        '9780672320675'                 ],
+        [ 'is',     'author',       'Clinton Pierce'                ],
         [ 'like',   'title',        qr!Perl Developer.*?Dictionary! ],
-        [ 'like',   'publisher',    qr/^Sams/                   ],  # publisher name changes!
-        [ 'like',   'pubdate',      qr/2001$/                   ],  # this dates fluctuates throughout Jul 2001!
-        [ 'is',     'binding',      'Paperback'                 ],
-        [ 'is',     'pages',        640                         ],
-        [ 'is',     'width',        187                         ],
-        [ 'is',     'height',       231                         ],
-        [ 'is',     'weight',       undef                       ],
-        [ 'like',   'image_link',   qr!^http://www.amazon.com/gp/product/images!                ],
-        [ 'like',   'thumb_link',   qr!http://[-\w]+.images-amazon.com/images/[-\w/.]+\.jpg!    ],
+        [ 'like',   'publisher',    qr/^Sams/                       ],  # publisher name changes!
+        [ 'like',   'pubdate',      qr/2001$/                       ],  # this dates fluctuates throughout Jul 2001!
+        [ 'is',     'binding',      'Paperback'                     ],
+        [ 'is',     'pages',        640                             ],
+        [ 'is',     'width',        187                             ],
+        [ 'is',     'height',       231                             ],
+        [ 'is',     'depth',        35                              ],
+        [ 'is',     'weight',       1043                            ],
+        [ 'like',   'image_link',   qr!^http://(www\.|[-\w]+\.images-)amazon\.com/(gp/product/images|images/[-\w/.,]+\.jpg)! ],
+        [ 'like',   'thumb_link',   qr!^http://(www\.|[-\w]+\.images-)amazon\.com/(gp/product/images|images/[-\w/.,]+\.jpg)! ],
         [ 'like',   'description',  qr|Perl Developer's Dictionary is a complete|                            ],
         [ 'like',   'book_link',    qr!http://www.amazon.com/(Perl-Developers-Dictionary|.*?field-keywords=(0672320673|9780672320675))! ]
-    ],
-
-    '9781408307557' => [
-        [ 'is',     'pages',        48                          ],
-        [ 'is',     'width',        129                         ],
-        [ 'is',     'height',       200                         ],
-        [ 'is',     'weight',       141                         ],
     ],
 );
 
@@ -88,6 +84,7 @@ SKIP: {
             is($record->found,1);
             is($record->found_in,$DRIVER);
 
+            my $fail = 0;
             my $book = $record->book;
             for my $test (@{ $tests{$isbn} }) {
                 if($test->[0] eq 'ok')          { ok(       $book->{$test->[1]},             ".. '$test->[1]' found [$isbn]"); } 
@@ -96,10 +93,10 @@ SKIP: {
                 elsif($test->[0] eq 'like')     { like(     $book->{$test->[1]}, $test->[2], ".. '$test->[1]' found [$isbn]"); } 
                 elsif($test->[0] eq 'unlike')   { unlike(   $book->{$test->[1]}, $test->[2], ".. '$test->[1]' found [$isbn]"); }
 
+                $fail = 1   unless(defined $book->{$test->[1]} || ($test->[0] ne 'ok' && !defined $test->[2]));
             }
 
-            #use Data::Dumper;
-            #diag("book=[".Dumper($book)."]");
+            diag("book=[".Dumper($book)."]")    if($fail);
         }
     }
 }
