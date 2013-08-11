@@ -22,12 +22,12 @@ my %tests = (
         [ 'like',   'pubdate',      qr/2004$/                       ],  # this date fluctuates throughout Mar/Apr 2004!
         [ 'is',     'binding',      'Paperback'                     ],
         [ 'is',     'pages',        336                             ],
-        [ 'is',     'width',        177                             ],
-        [ 'is',     'height',       233                             ],
-        [ 'is',     'depth',        20                              ],
+        [ 'like',   'width',        qr/^\d+/                        ],
+        [ 'like',   'height',       qr/^\d+/                        ],
+        [ 'like',   'depth',        qr/^\d+/                        ],
         [ 'is',     'weight',       544                             ],
-        [ 'like',   'image_link',   qr!^http://(www\.|[-\w]+\.images-)amazon\.com/(gp/product/images|images/[-\w/.,]+\.jpg)! ],
-        [ 'like',   'thumb_link',   qr!^http://(www\.|[-\w]+\.images-)amazon\.com/(gp/product/images|images/[-\w/.,]+\.jpg)! ],
+        [ 'like',   'image_link',   qr!^http://ecx.images-amazon.co!],
+        [ 'like',   'thumb_link',   qr!^http://ecx.images-amazon.co!],
         [ 'like',   'description',  qr|This book is about taking over Perl code| ],
         [ 'like',   'book_link',    qr!^http://www.amazon.com/(Perl-Medic|.*?field-keywords=(0201795264|9780201795264))! ]
     ],
@@ -42,12 +42,12 @@ my %tests = (
         [ 'like',   'pubdate',      qr/2001$/                       ],  # this dates fluctuates throughout Jul 2001!
         [ 'is',     'binding',      'Paperback'                     ],
         [ 'is',     'pages',        640                             ],
-        [ 'is',     'width',        187                             ],
-        [ 'is',     'height',       231                             ],
-        [ 'is',     'depth',        35                              ],
+        [ 'like',   'width',        qr/^\d+/                        ],
+        [ 'like',   'height',       qr/^\d+/                        ],
+        [ 'like',   'depth',        qr/^\d+/                        ],
         [ 'is',     'weight',       1043                            ],
-        [ 'like',   'image_link',   qr!^http://(www\.|[-\w]+\.images-)amazon\.com/(gp/product/images|images/[-\w/.,]+\.jpg)! ],
-        [ 'like',   'thumb_link',   qr!^http://(www\.|[-\w]+\.images-)amazon\.com/(gp/product/images|images/[-\w/.,]+\.jpg)! ],
+        [ 'like',   'image_link',   qr!^http://ecx.images-amazon.co!],
+        [ 'like',   'thumb_link',   qr!^http://ecx.images-amazon.co!],
         [ 'like',   'description',  qr|Perl Developer's Dictionary is a complete|                            ],
         [ 'like',   'book_link',    qr!http://www.amazon.com/(Perl-Developers-Dictionary|.*?field-keywords=(0672320673|9780672320675))! ]
     ],
@@ -112,7 +112,7 @@ sub pingtest {
 
     eval { system($cmd) }; 
     if($@) {                # can't find ping, or wrong arguments?
-        diag();
+        diag($@);
         return 1;
     }
 

@@ -20,6 +20,7 @@ DEPENDENCIES
 
 This module requires these modules:
 
+  JSON
   WWW::Scraper::ISBN
   WWW::Scraper::ISBN::Record
   WWW::Scraper::ISBN::Driver

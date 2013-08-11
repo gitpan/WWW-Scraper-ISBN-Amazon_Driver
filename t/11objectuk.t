@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 use strict;
 
-use Test::More tests => 47;
+use Test::More tests => 48;
 use WWW::Scraper::ISBN;
 use Data::Dumper;
 
@@ -22,13 +22,13 @@ my %tests = (
         [ 'like',   'pubdate',      qr/2004$/                       ],  # this date fluctuates throughout Mar/Apr 2004!
         [ 'is',     'binding',      'Paperback'                     ],
         [ 'is',     'pages',        336                             ],
-        [ 'is',     'width',        175                             ],
-        [ 'is',     'height',       229                             ],
-        [ 'is',     'depth',        20                              ],
+        [ 'like',   'width',        qr/^\d+/                        ],
+        [ 'like',   'height',       qr/^\d+/                        ],
+        [ 'like',   'depth',        qr/^\d+/                        ],
         [ 'is',     'weight',       undef                           ],
-        [ 'like',   'image_link',   qr!http://www.amazon.co.uk/gp/product/images!               ],
-        [ 'like',   'thumb_link',   qr!http://[-\w]+.images-amazon.com/images/[-\w/.]+\.jpg!    ],
-        [ 'like',   'description',  qr|This book is about taking over Perl code| ],
+        [ 'like',   'image_link',   qr!^http://ecx.images-amazon.co!],
+        [ 'like',   'thumb_link',   qr!^http://ecx.images-amazon.co!],
+        [ 'like',   'description',  qr|Cure whatever ails your Perl code| ],
         [ 'like',   'book_link',    qr!^http://www.amazon.co.uk/(Perl-Medic|.*?field-keywords=(0201795264|9780201795264))! ]
     ],
     '9780672320675' => [
@@ -42,20 +42,21 @@ my %tests = (
         [ 'like',   'pubdate',      qr/2001$/                       ],  # this dates fluctuates throughout Jul 2001!
         [ 'is',     'binding',      'Paperback'                     ],
         [ 'is',     'pages',        640                             ],
-        [ 'is',     'width',        188                             ],
-        [ 'is',     'height',       231                             ],
-        [ 'is',     'depth',        35                              ],
+        [ 'like',   'width',        qr/^\d+/                        ],
+        [ 'like',   'height',       qr/^\d+/                        ],
+        [ 'like',   'depth',        qr/^\d+/                        ],
         [ 'is',     'weight',       undef                           ],
-        [ 'like',   'image_link',   qr!http://www.amazon.co.uk/gp/product/images!               ],
-        [ 'like',   'thumb_link',   qr!http://[-\w]+.images-amazon.com/images/[-\w/.]+\.jpg!    ],
+        [ 'like',   'image_link',   qr!^http://ecx.images-amazon.co!],
+        [ 'like',   'thumb_link',   qr!^http://ecx.images-amazon.co!],
         [ 'like',   'description',  qr|Perl Developer's Dictionary is a complete|                            ],
         [ 'like',   'book_link',    qr!^http://www.amazon.co.uk/(Perl-Developers-Dictionary|.*?field-keywords=(0672320673|9780672320675))! ]
     ],
 
     '9781408307557' => [
         [ 'is',     'pages',        48                          ],
-        [ 'is',     'width',        130                         ],
-        [ 'is',     'height',       200                         ],
+        [ 'like',   'width',        qr/^\d+/                    ],
+        [ 'like',   'height',       qr/^\d+/                    ],
+        [ 'like',   'depth',        qr/^\d+/                    ],
         [ 'is',     'weight',       undef                       ],
     ],
 );
@@ -119,7 +120,7 @@ sub pingtest {
 
     eval { system($cmd) }; 
     if($@) {                # can't find ping, or wrong arguments?
-        diag();
+        diag($@);
         return 1;
     }
 

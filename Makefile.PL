@@ -15,6 +15,7 @@ WriteMakefile(
     PREREQ_PM           => {
 
         # prereqs
+        'JSON'                          => '0',
         'WWW::Scraper::ISBN'            => '0.25',
         'WWW::Scraper::ISBN::Driver'    => '0.18',
         'WWW::Mechanize'                => '1.60',

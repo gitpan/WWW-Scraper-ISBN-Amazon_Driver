@@ -1,5 +1,13 @@
 Revision history for Perl extension WWW::Scraper::ISBN::Amazon_Driver.
 
+0.30    2013-08-11
+        - added isbn-check.pl to examples.
+        - License updated consistently to Artistic License v2.0.
+        - META updates.
+        - height, width, depth regex reworked, tests simplified.
+        - image, thumb regex reworked, now uses JSON, tests simplified.
+        - UK description regex updated.
+
 0.29    2013-03-03
         - alternative regexes for AmazonUS titles (thanks to Franck Porcher).
         - fixed weight calculations.

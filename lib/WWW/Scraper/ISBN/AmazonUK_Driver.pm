@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.29';
+$VERSION = '0.30';
 
 #--------------------------------------------------------------------------
 
@@ -33,6 +33,7 @@ use base qw(WWW::Scraper::ISBN::Driver);
 # Modules
 
 use WWW::Mechanize;
+use JSON;
 
 ###########################################################################
 # Variables
@@ -116,17 +117,40 @@ sub search {
 
 #print STDERR "\n# html=[$html]\n";
 
-    ($data->{height},$data->{width},$data->{depth})    
-                                        = $html =~ m!<li><b>\s*Product Dimensions:\s*</b>\s*([\d.]+) x ([\d.]+) x ([\d.]+) cm\s*</li>!si;
+    my @size                            = $html =~ m!<li><b>\s*Product Dimensions:\s*</b>\s*([\d.]+) x ([\d.]+) x ([\d.]+) (cm)\s*</li>!si;
+    @size                               = $html =~ m!<li><b>\s*Product Dimensions:\s*</b>\s*([\d.]+) x ([\d.]+) x ([\d.]+) (inches)\s*</li>!si unless(@size);
+    my $type = pop @size;
+    ($data->{depth},$data->{width},$data->{height}) = sort @size;    
+    if($type eq 'cm') {
+        $data->{$_}  = int($data->{$_} * 10)  for(qw( height width depth ));
+    } elsif($type eq 'inches') {
+        $data->{$_}  = int($data->{$_} / $IN2MM)  for(qw( height width depth ));
+    }
+    
     ($data->{binding},$data->{pages})   = $html =~ m!<li><b>(Paperback|Hardcover):</b>\s*([\d.]+)\s*pages</li>!si;
     ($data->{weight})                   = $html =~ m!<li><b>Shipping Weight:</b>\s*([\d.]+)\s*ounces</li>!si;
     ($data->{published})                = $html =~ m!<li><b>Publisher:</b>\s*(.*?)</li>!si;
     ($data->{isbn10})                   = $html =~ m!<li><b>ISBN-10:</b>\s*(.*?)</li>!si;
     ($data->{isbn13})                   = $html =~ m!<li><b>ISBN-13:</b>\s*(.*?)</li>!si;
     ($data->{content})                  = $html =~ m!<meta name="description" content="([^"]+)"!si;
-    ($data->{description})              = $html =~ m!<h3 class="productDescriptionSource">Product Description</h3>\s*<div class="productDescriptionWrapper">\s*<P>([^<]+)!si;  
-	($data->{thumb_link},$data->{image_link})  
-                                        = $html =~ m!registerImage\("original_image",\s*"([^"]+)",\s*"<a href="\+'"'\+"([^"]+)"\+!;
+    ($data->{description})              = $html =~ m!From the Back Cover</h3>\s*<div class="productDescriptionWrapper"\s*>\s*<P>(.*?)<div!si;  
+
+    if($data->{description}) {
+        $data->{description} =~ s!<[^>]+>!!g;
+        $data->{description} =~ s! +! !g;
+    }
+
+    # The images
+    my ($json) = $html =~ /var colorImages = ([^;]+);/si;
+    my $code = decode_json($json);
+    my @order = grep {$_} $code->{initial}[0]{thumb}, $code->{initial}[0]{landing}, @{$code->{initial}[0]{main}}, $code->{initial}[0]{large};
+    $data->{thumb_link} = $order[0]     if(@order);
+    $data->{image_link} = $order[-1]    if(@order);
+
+#use Data::Dumper;
+#print STDERR "\n# code=[".Dumper($code)."]\n";
+
+#    {\"initial\":[{\"large\":\"http://ecx.images-amazon.com/images/I/31cLTIXHKgL.jpg\",\"landing\":[\"http://ecx.images-amazon.com/images/I/31cLTIXHKgL._SY300_.jpg\"],\"thumb\":\"http://ecx.images-amazon.com/images/I/31cLTIXHKgL._SS40_.jpg\",\"main\":[\"http://ecx.images-amazon.com/images/I/31cLTIXHKgL._SX342_.jpg\",\"http://ecx.images-amazon.com/images/I/31cLTIXHKgL._SX385_.jpg\"]}]};
 
     $data->{content} =~ s/Amazon\.co\.uk.*?://i;
     $data->{content} =~ s/: Books.*//i;
@@ -137,8 +161,6 @@ sub search {
     $data->{isbn13}  =~ s/\D+//g        if($data->{isbn13});
 	$data->{pubdate} =~ s/^.*?\(//      if($data->{pubdate});
 
-    $data->{width}  = int($data->{width} * 10)  if($data->{width});
-    $data->{height} = int($data->{height} * 10) if($data->{height});
 
 	return $self->handler("Could not extract data from Amazon UK result page.")
 		unless(defined $data->{isbn13});

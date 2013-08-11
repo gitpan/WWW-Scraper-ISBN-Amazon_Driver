@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.29';
+$VERSION = '0.30';
 
 #--------------------------------------------------------------------------
 
@@ -33,6 +33,7 @@ use base qw(WWW::Scraper::ISBN::Driver);
 # Modules
 
 use WWW::Mechanize;
+use JSON;
 
 ###########################################################################
 # Variables
@@ -156,14 +157,22 @@ sub search {
     $data->{weight} = int($data->{weight} / $LB2G)  if($data->{weight} && $weight eq 'pounds');
 
     # amazon change this regularly
-    ($data->{width},$data->{depth},$data->{height}) = $html =~ m!<li><b>\s*Product Dimensions:\s*</b>\s*([\d.]+) x ([\d.]+) x ([\d.]+) inches\s*</li>!si;
-    $data->{width}  = int($data->{width}  / $IN2MM) if($data->{width});
-    $data->{depth}  = int($data->{depth}  / $IN2MM) if($data->{depth});
-    $data->{height} = int($data->{height} / $IN2MM) if($data->{height});
+    my @size                            = $html =~ m!<li><b>\s*Product Dimensions:\s*</b>\s*([\d.]+) x ([\d.]+) x ([\d.]+) (cm)\s*</li>!si;
+    @size                               = $html =~ m!<li><b>\s*Product Dimensions:\s*</b>\s*([\d.]+) x ([\d.]+) x ([\d.]+) (inches)\s*</li>!si unless(@size);
+    my $type = pop @size;
+    ($data->{depth},$data->{width},$data->{height}) = sort @size;    
+    if($type eq 'cm') {
+        $data->{$_}  = int($data->{$_} * 10)  for(qw( height width depth ));
+    } elsif($type eq 'inches') {
+        $data->{$_}  = int($data->{$_} / $IN2MM)  for(qw( height width depth ));
+    }
 
-    ($data->{thumb_link},$data->{image_link}) = $html =~ m!registerImage\("original_image",\s*"([^"]+)",\s*"<a href="\+'"'\+"([^"]+)"\+!si;
-    ($data->{image_link},$data->{thumb_link}) = $html =~ m!<script type="text/javascript">\s*var colorImages = \{"initial":\[\{(?:"large":"[^"]+",)?"landing":\["([^"]+)"\],"thumb":"([^"]+)"!si
-        unless(($data->{image_link} && $data->{thumb_link}));
+    # The images
+    my ($json) = $html =~ /var colorImages = ([^;]+);/si;
+    my $code = decode_json($json);
+    my @order = grep {$_} $code->{initial}[0]{thumb}, $code->{initial}[0]{landing}, @{$code->{initial}[0]{main}}, $code->{initial}[0]{large};
+    $data->{thumb_link} = $order[0]     if(@order);
+    $data->{image_link} = $order[-1]    if(@order);
 
     ($data->{publisher},$data->{pubdate}) = ($data->{published} =~ /\s*(.*?)(?:;.*?)?\s+\((.*?)\)/) if($data->{published});
     $data->{isbn10} =~ s/[^\dX]+//g if($data->{isbn10});
