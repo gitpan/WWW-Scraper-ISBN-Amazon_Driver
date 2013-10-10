@@ -21,8 +21,9 @@ WriteMakefile(
         'WWW::Mechanize'                => '1.60',
 
         # build/test prereqs
-        'Test::More'                    => '0.70',
-        'IO::File'                      => '0'
+        'Data::Dumper'                  => '0',
+        'IO::File'                      => '0',
+        'Test::More'                    => '0.70'
 
     }
 );
