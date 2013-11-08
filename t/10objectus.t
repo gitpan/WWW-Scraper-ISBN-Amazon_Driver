@@ -28,7 +28,7 @@ my %tests = (
         [ 'is',     'weight',       544                             ],
         [ 'like',   'image_link',   qr!^http://ecx.images-amazon.co!],
         [ 'like',   'thumb_link',   qr!^http://ecx.images-amazon.co!],
-        [ 'like',   'description',  qr|This book is about taking over Perl code| ],
+        [ 'like',   'description',  qr|Bring new power, performance, and scalability| ],
         [ 'like',   'book_link',    qr!^http://www.amazon.com/(Perl-Medic|.*?field-keywords=(0201795264|9780201795264))! ]
     ],
     '9780672320675' => [
