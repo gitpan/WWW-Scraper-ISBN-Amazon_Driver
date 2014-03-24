@@ -1,6 +1,9 @@
 Revision history for WWW::Scraper::ISBN::Amazon_Driver
 ======================================================
 
+0.33    2014-03-24
+        - added Amazon_Driver.pm, to help with PAUSE permissions.
+
 0.32    2013-11-08
         - amazon.com updated dscription for Perl Medic.
 
