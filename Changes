@@ -1,6 +1,12 @@
 Revision history for WWW::Scraper::ISBN::Amazon_Driver
 ======================================================
 
+0.34    2014-04-02
+        - getting the size can still fail, if data not available.
+        - extract parse functionality into separate method, to allow testing.
+        - protect against missing values causing undef errors.
+        - extended test suite.
+
 0.33    2014-03-24
         - added Amazon_Driver.pm, to help with PAUSE permissions.
 

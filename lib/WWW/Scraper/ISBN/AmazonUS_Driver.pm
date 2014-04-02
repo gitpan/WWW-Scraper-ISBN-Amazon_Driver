@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.33';
+$VERSION = '0.34';
 
 #--------------------------------------------------------------------------
 
@@ -110,6 +110,13 @@ sub search {
     return $self->handler("Amazon US website appears to be unavailable.")
         if($@ || !$mech->success() || !$mech->content());
 
+    return $self->_parse($mech);
+}
+
+sub _parse {
+    my $self = shift;
+    my $mech = shift;
+
     # The Book page
     my $html = $mech->content;
     my $data = {};
@@ -159,20 +166,24 @@ sub search {
     # amazon change this regularly
     my @size                            = $html =~ m!<li><b>\s*Product Dimensions:\s*</b>\s*([\d.]+) x ([\d.]+) x ([\d.]+) (cm)\s*</li>!si;
     @size                               = $html =~ m!<li><b>\s*Product Dimensions:\s*</b>\s*([\d.]+) x ([\d.]+) x ([\d.]+) (inches)\s*</li>!si unless(@size);
-    my $type = pop @size;
-    ($data->{depth},$data->{width},$data->{height}) = sort @size;    
-    if($type eq 'cm') {
-        $data->{$_}  = int($data->{$_} * 10)  for(qw( height width depth ));
-    } elsif($type eq 'inches') {
-        $data->{$_}  = int($data->{$_} / $IN2MM)  for(qw( height width depth ));
+    if(@size) {
+        my $type = pop @size;
+        ($data->{depth},$data->{width},$data->{height}) = sort @size;    
+        if($type eq 'cm') {
+            $data->{$_}  = int($data->{$_} * 10)  for(qw( height width depth ));
+        } elsif($type eq 'inches') {
+            $data->{$_}  = int($data->{$_} / $IN2MM)  for(qw( height width depth ));
+        }
     }
 
     # The images
     my ($json) = $html =~ /var colorImages = ([^;]+);/si;
-    my $code = decode_json($json);
-    my @order = grep {$_} $code->{initial}[0]{thumb}, $code->{initial}[0]{landing}, @{$code->{initial}[0]{main}}, $code->{initial}[0]{large};
-    $data->{thumb_link} = $order[0]     if(@order);
-    $data->{image_link} = $order[-1]    if(@order);
+    if($json) {
+        my $code = decode_json($json);
+        my @order = grep {$_} $code->{initial}[0]{thumb}, $code->{initial}[0]{landing}, @{$code->{initial}[0]{main}}, $code->{initial}[0]{large};
+        $data->{thumb_link} = $order[0]     if(@order);
+        $data->{image_link} = $order[-1]    if(@order);
+    }
 
     ($data->{publisher},$data->{pubdate}) = ($data->{published} =~ /\s*(.*?)(?:;.*?)?\s+\((.*?)\)/) if($data->{published});
     $data->{isbn10} =~ s/[^\dX]+//g if($data->{isbn10});
@@ -212,7 +223,7 @@ sub search {
     return $self->book;
 }
 
-q{currently reading: Red Rabbit by Tom Clancy};
+q{currently reading: 'Soul Music' by Terry Pratchett};
 
 __END__
 
@@ -248,7 +259,7 @@ be forthcoming, please feel free to (politely) remind me.
 
 =head1 COPYRIGHT & LICENSE
 
-  Copyright (C) 2004-2013 Barbie for Miss Barbell Productions
+  Copyright (C) 2004-2014 Barbie for Miss Barbell Productions
 
   This distribution is free software; you can redistribute it and/or
   modify it under the Artistic Licence v2.
