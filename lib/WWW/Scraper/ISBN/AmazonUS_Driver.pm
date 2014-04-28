@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.35';
+$VERSION = '0.36';
 
 #--------------------------------------------------------------------------
 
@@ -152,10 +152,27 @@ sub _parse {
     ($data->{isbn10})                   = $html =~ m!<li><b>ISBN-10:</b>\s*(.*?)</li>!si;
     ($data->{isbn13})                   = $html =~ m!<li><b>ISBN-13:</b>\s*(.*?)</li>!si;
     ($data->{content})                  = $html =~ m!<meta name="description" content="([^"]+)"!si;
-    ($data->{description})              = $html =~ m!<h2>Book Description</h2>.*?<div id="postBodyPS"[^>]+>\s*<div[^>]*>\s*<p>\s*(.*?)\s*</p>\s*</div!si;
-    ($data->{description})              = $html =~ m!<h2>Book Description</h2>.*?<div id="postBodyPS"[^>]+>\s*<div[^>]*>\s*(.*?)\s*</div!si                                                             unless($data->{description});  
-    ($data->{description})              = $html =~ m!<h3 class="productDescriptionSource">(?:Product Description|From the Back Cover)</h3>\s*<div class="productDescriptionWrapper">\s*<p>([^<]+)!si    unless($data->{description});  
-    ($data->{description})              = $html =~ m!<h3 class="productDescriptionSource">(?:Product Description|From the Back Cover)</h3>\s*<div class="productDescriptionWrapper">\s*(.*?)<div!si     unless($data->{description});  
+
+    @patterns = (
+        qr!<h2>Book Description</h2>.*?<div id="postBodyPS"[^>]+>\s*<div[^>]*>\s*<p>\s*(.*?)\s*</p>\s*</div!si,
+        qr!<h2>Book Description</h2>.*?<div id="postBodyPS"[^>]+>\s*<div[^>]*>\s*(.*?)\s*</div!si,
+        qr!<h3 class="productDescriptionSource">(?:Product Description|From the Back Cover)</h3>\s*<div class="productDescriptionWrapper">\s*<p>([^<]+)!si,
+        qr!<h3 class="productDescriptionSource">(?:Product Description|From the Back Cover)</h3>\s*<div class="productDescriptionWrapper">\s*(.*?)<div!si,
+        qr!<div id="bookDescription_feature_div"[^>]+>\s*<script[^>]*>.*?</script>\s*<noscript>(.*?)</noscript>!si
+    );
+
+    for my $pattern (@patterns) {
+        my ($desc) = $html =~ $pattern;
+        $desc =~ s/\s+$//s   if($desc);
+        $data->{description}  ||= $desc;
+
+        last    if($data->{description});
+    }
+
+    for my $key (qw(description)) {
+        next unless($data->{$key});
+        $data->{$key} =~ s/<[^>]*>//gs;
+    }
 
     # amazon use both ounces and pounds
     my $weight;
@@ -183,6 +200,9 @@ sub _parse {
         my @order = grep {$_} $code->{initial}[0]{thumb}, $code->{initial}[0]{landing}, @{$code->{initial}[0]{main}}, $code->{initial}[0]{large};
         $data->{thumb_link} = $order[0]     if(@order);
         $data->{image_link} = $order[-1]    if(@order);
+    } else {
+        ($data->{thumb_link}) = $html =~ m!imageGalleryData.*?thumbUrl":"([^"]+)"!;
+        ($data->{image_link}) = $html =~ m!imageGalleryData.*?mainUrl":"([^"]+)"!;
     }
 
     ($data->{publisher},$data->{pubdate}) = ($data->{published} =~ /\s*(.*?)(?:;.*?)?\s+\((.*?)\)/) if($data->{published});

@@ -8,7 +8,7 @@ use ExtUtils::MakeMaker;
 
 WriteMakefile(
     AUTHOR              => 'Barbie <barbie@cpan.org>',
-    NAME                => 'WWW::Scraper::ISBN::Amazon_Driver',
+    NAME                => 'WWW-Scraper-ISBN-Amazon_Driver',
     VERSION_FROM        => 'lib/WWW/Scraper/ISBN/AmazonUS_Driver.pm',
     ABSTRACT            => 'Search drivers for the Amazon online catalog',
     NO_META             => 1,

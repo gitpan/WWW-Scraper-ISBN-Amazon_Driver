@@ -1,5 +1,5 @@
-WWW::Scraper::ISBN::Amazon_Driver
-=================================
+WWW-Scraper-ISBN-Amazon_Driver
+==============================
 
 This distribution contains two Perl extensions for the ISBN search collection 
 that is provide by WWW::Scraper::ISBN.

@@ -1,5 +1,9 @@
-Revision history for WWW::Scraper::ISBN::Amazon_Driver
-======================================================
+Revision history for WWW-Scraper-ISBN-Amazon_Driver
+===================================================
+
+0.36    2014-04-28
+        - amazon.com updated HTML output.
+        - fixed distribution name in META.
 
 0.35    2014-04-05
         - reduce size of test data footprint.
@@ -14,7 +18,7 @@ Revision history for WWW::Scraper::ISBN::Amazon_Driver
         - added Amazon_Driver.pm, to help with PAUSE permissions.
 
 0.32    2013-11-08
-        - amazon.com updated dscription for Perl Medic.
+        - amazon.com updated description for Perl Medic.
 
 0.31    2013-10-19
         - added git repository links to metadata.
