@@ -45,7 +45,7 @@ my %tests = (
         [ 'like',   'width',        qr/^\d+/                        ],
         [ 'like',   'height',       qr/^\d+/                        ],
         [ 'like',   'depth',        qr/^\d+/                        ],
-        [ 'is',     'weight',       1043                            ],
+        [ 'like',   'weight',       qr/10\d+/                       ],
         [ 'like',   'image_link',   qr!^http://ecx.images-amazon.co!],
         [ 'like',   'thumb_link',   qr!^http://ecx.images-amazon.co!],
         [ 'like',   'description',  qr|Perl Developer's Dictionary is a complete|                            ],

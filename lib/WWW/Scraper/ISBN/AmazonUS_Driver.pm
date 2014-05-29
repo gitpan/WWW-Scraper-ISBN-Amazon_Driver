@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.36';
+$VERSION = '0.37';
 
 #--------------------------------------------------------------------------
 
@@ -92,10 +92,16 @@ sub search {
     $self->found(0);
     $self->book(undef);
 
+    # validate and convert into EAN13 format
+    my $ean = $self->convert_to_ean13($isbn);
+    return $self->handler("Invalid ISBN specified [$isbn]")   
+        if(!$ean || (length $isbn == 13 && $isbn ne $ean)
+                 || (length $isbn == 10 && $isbn ne $self->convert_to_isbn10($ean)));
+
     my $mech = WWW::Mechanize->new();
     $mech->agent_alias( 'Linux Mozilla' );
 
-    my $search = sprintf $AMA_SEARCH, $isbn;
+    my $search = sprintf $AMA_SEARCH, $ean;
 
     eval { $mech->get( $search ) };
     return $self->handler("Amazon US website appears to be unavailable.")
