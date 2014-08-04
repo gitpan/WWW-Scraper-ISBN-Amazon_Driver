@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.37';
+$VERSION = '0.38';
 
 #--------------------------------------------------------------------------
 
@@ -174,7 +174,9 @@ sub _parse {
     if($data->{content}) {
         $data->{content} =~ s/Amazon\.co\.uk.*?://i;
         $data->{content} =~ s/: Books.*//i;
-        ($data->{title},$data->{author}) = ($data->{content} =~ /\s*(.*?)(?:\s+by|,|:)\s+([^:]+)\s*$/);
+        ($data->{title},$data->{author}) = split(/\s+by\s+/,$data->{content});
+        $data->{title}  =~ s/^Buy\s+//;
+        $data->{author} =~ s/\s*\(.*//;
     }
 
     ($data->{publisher},$data->{pubdate}) = ($data->{published} =~ /\s*(.*?)(?:;.*?)?\s+\((.*?)\)/) if($data->{published});

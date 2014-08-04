@@ -1,6 +1,10 @@
 Revision history for WWW-Scraper-ISBN-Amazon_Driver
 ===================================================
 
+0.38    2014-08-04
+        - fixed for UK website update.
+        - fixed UK site testing.
+
 0.37    2014-05-29
         - added conversion routines to obtain EAN13.
         - upgrade to WWW-Scraper-ISBN-1.00.
