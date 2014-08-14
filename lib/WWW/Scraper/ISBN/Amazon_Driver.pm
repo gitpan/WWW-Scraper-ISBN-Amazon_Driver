@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.38';
+$VERSION = '0.39';
 
 #--------------------------------------------------------------------------
 
@@ -20,7 +20,7 @@ See parent class documentation (L<WWW::Scraper::ISBN::Driver>)
 
 Searches for book information from the UK & US Amazon online catalogs.
 
-For specific usability of the drivers, please see the documentation for the 
+For specific usability of the drivers, please see the documentation for the
 respective driver you require.
 
 =head1 REQUIRES

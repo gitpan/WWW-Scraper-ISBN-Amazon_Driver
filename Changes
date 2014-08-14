@@ -1,6 +1,9 @@
 Revision history for WWW-Scraper-ISBN-Amazon_Driver
 ===================================================
 
+0.39    2014-08-14
+        - further fixes for UK layout changes.
+
 0.38    2014-08-04
         - fixed for UK website update.
         - fixed UK site testing.

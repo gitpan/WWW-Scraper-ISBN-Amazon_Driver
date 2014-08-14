@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.38';
+$VERSION = '0.39';
 
 #--------------------------------------------------------------------------
 
@@ -55,7 +55,7 @@ my $OZ2G  = 0.035274;       # number of ounces (oz) in a gram
 
 =item C<search()>
 
-Creates a query string, then passes the appropriate form fields to the 
+Creates a query string, then passes the appropriate form fields to the
 Amazon (US) server.
 
 The returned page should be the correct catalog page for that ISBN. If not the
@@ -63,7 +63,7 @@ function returns zero and allows the next driver in the chain to have a go. If
 a valid page is returned, the following fields are returned via the book hash:
 
   isbn          (now returns isbn13)
-  isbn10        
+  isbn10
   isbn13
   ean13         (industry name)
   author
@@ -94,7 +94,7 @@ sub search {
 
     # validate and convert into EAN13 format
     my $ean = $self->convert_to_ean13($isbn);
-    return $self->handler("Invalid ISBN specified [$isbn]")   
+    return $self->handler("Invalid ISBN specified [$isbn]")
         if(!$ean || (length $isbn == 13 && $isbn ne $ean)
                  || (length $isbn == 10 && $isbn ne $self->convert_to_isbn10($ean)));
 
@@ -129,12 +129,12 @@ sub _parse {
 
 #print STDERR "\n# html=[$html]\n";
 
-    $data->{title} = $1                                                     
-        if    ( $html =~ m{<h2   \s+ class="quorus-product-name" \s* > \s*     (.+?) (?= </h2>)    }six && $1 )                                               
-           || ( $html =~ m{<span \s+    id="btAsinTitle"         \s* > \s*     (.+?) (?= </?span>) }six && $1 )                                               
+    $data->{title} = $1
+        if    ( $html =~ m{<h2   \s+ class="quorus-product-name" \s* > \s*     (.+?) (?= </h2>)    }six && $1 )
+           || ( $html =~ m{<span \s+    id="btAsinTitle"         \s* > \s*     (.+?) (?= </?span>) }six && $1 )
            || ( $html =~ m{<td   \s+    id="prodImageCell" .+?                 alt="([^"]+)"}six && $1 )
-    ;    
-    
+    ;
+
     # Note: as the page changes, the older matches are now retained in the
     # event that these are ever reused.
 
@@ -191,7 +191,7 @@ sub _parse {
     @size                               = $html =~ m!<li><b>\s*Product Dimensions:\s*</b>\s*([\d.]+) x ([\d.]+) x ([\d.]+) (inches)\s*</li>!si unless(@size);
     if(@size) {
         my $type = pop @size;
-        ($data->{depth},$data->{width},$data->{height}) = sort @size;    
+        ($data->{depth},$data->{width},$data->{height}) = sort @size;
         if($type eq 'cm') {
             $data->{$_}  = int($data->{$_} * 10)  for(qw( height width depth ));
         } elsif($type eq 'inches') {
