@@ -1,6 +1,10 @@
 Revision history for WWW-Scraper-ISBN-Amazon_Driver
 ===================================================
 
+0.40    2014-09-17
+        - fixed license fields in META.json to be lists.
+        - added new title/author pattern.
+
 0.39    2014-08-14
         - further fixes for UK layout changes.
 

@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use vars qw($VERSION);
-$VERSION = '0.39';
+$VERSION = '0.40';
 
 #--------------------------------------------------------------------------
 
@@ -129,16 +129,8 @@ sub _parse {
 
 #print STDERR "\n# html=[$html]\n";
 
-    $data->{title} = $1
-        if    ( $html =~ m{<h2   \s+ class="quorus-product-name" \s* > \s*     (.+?) (?= </h2>)    }six && $1 )
-           || ( $html =~ m{<span \s+    id="btAsinTitle"         \s* > \s*     (.+?) (?= </?span>) }six && $1 )
-           || ( $html =~ m{<td   \s+    id="prodImageCell" .+?                 alt="([^"]+)"}six && $1 )
-    ;
-
-    # Note: as the page changes, the older matches are now retained in the
-    # event that these are ever reused.
-
     my @patterns = (
+        qr/<meta name="description" content="(.*?) \[(.*?)\] on Amazon.com/si,
         qr/<meta name="description" content="(.*?): (.*?): (\d+): Amazon.com: Books/si,
         qr/<meta name="description" content="(?:Amazon.com:)?\s*(.*?).\d+.:\s+([^:]+): Books/si,
         qr/<meta name="description" content="(?:Amazon.com: Books: )?\s*(.*?)(?:\s+by|,)\s+(.*)/si,
@@ -149,6 +141,7 @@ sub _parse {
         my ($title,$author) = $html =~ $pattern;
         $data->{title}  ||= $title;
         $data->{author} ||= $author;
+#print STDERR "\n# title=[$data->{title}], author=[$data->{author}] pattern=[$pattern]\n";
 
         last    if($data->{title} && $data->{author});
     }

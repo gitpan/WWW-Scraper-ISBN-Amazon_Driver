@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                   WWW-Scraper-ISBN-Amazon_Driver
-version:                0.39
+version:                0.40
 abstract:               Search drivers for the Amazon online catalog.
 author:
   - Barbie <barbie@cpan.org>
@@ -28,13 +28,13 @@ build_requires:
 provides:
   WWW::Scraper::ISBN::Amazon_Driver:
     file:     lib/WWW/Scraper/ISBN/Amazon_Driver.pm
-    version:  0.39
+    version:  0.40
   WWW::Scraper::ISBN::AmazonUK_Driver:
     file:     lib/WWW/Scraper/ISBN/AmazonUK_Driver.pm
-    version:  0.39
+    version:  0.40
   WWW::Scraper::ISBN::AmazonUS_Driver:
     file:     lib/WWW/Scraper/ISBN/AmazonUS_Driver.pm
-    version:  0.39
+    version:  0.40
 no_index:
   directory:
     - t
@@ -48,5 +48,4 @@ resources:
 meta-spec:
    version:   1.4
    url:       http://module-build.sourceforge.net/META-spec-v1.4.html
-generated_by: Hand 1.0
-
+generated_by: The Hand of Barbie 1.0
